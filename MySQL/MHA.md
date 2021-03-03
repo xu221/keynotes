@@ -1,5 +1,3 @@
-#MHA技术具备两种节点Manager、Node节点
-
 1.构建主从复制环境
 
 ```
@@ -30,7 +28,7 @@ yum install perl-Log-Dispatch
      -->perl-MIME-Lite-3.030-1.el7.noarch.rpm
      -->perl-MIME-Types-1.38-2.el7.noarch.rpm
 yum install perl-Parallel-ForkManager
-
+# 可参考上一级MHA4perlrequires目录中安装包
 yum install mha4mysql-manager-0.58-0.el7.centos.noarch.rpm
 ```
 
