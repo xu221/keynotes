@@ -117,4 +117,3 @@ mysql> select count(*) from customer;
 | ----- | ---------- |
 | 6.21s | 2.993s     |
 
-```
