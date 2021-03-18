@@ -1236,33 +1236,33 @@ mysql> select name from setup_instruments;
   -->performance_schema.events_transactions_history_long
   ```
 
-**上述四类表依旧具备收集开关，由performance_schema.setup_consumers表决定**
-
-```
-mysql> select * from setup_consumers;
-+----------------------------------+---------+
-| NAME                             | ENABLED |
-+----------------------------------+---------+
-| events_stages_current            | YES     |
-| events_stages_history            | YES     |
-| events_stages_history_long       | YES     |
-| events_statements_current        | YES     |
-| events_statements_history        | YES     |
-| events_statements_history_long   | NO      |
-| events_transactions_current      | NO      |
-| events_transactions_history      | NO      |
-| events_transactions_history_long | NO      |
-| events_waits_current             | NO      |
-| events_waits_history             | NO      |
-| events_waits_history_long        | NO      |
-| global_instrumentation           | YES     |
-| thread_instrumentation           | YES     |
-| statements_digest                | YES     |
-+----------------------------------+---------+
-15 rows in set (0.00 sec)
-# 决定监控是否生效规则
-global_instrumentation->thread_instrumentation=statements_digest->others
-```
+> 上述四类表依旧具备收集开关，由performance_schema.setup_consumers表决定
+>
+> ```
+> mysql> select * from setup_consumers;
+> +----------------------------------+---------+
+> | NAME                             | ENABLED |
+> +----------------------------------+---------+
+> | events_stages_current            | YES     |
+> | events_stages_history            | YES     |
+> | events_stages_history_long       | YES     |
+> | events_statements_current        | YES     |
+> | events_statements_history        | YES     |
+> | events_statements_history_long   | NO      |
+> | events_transactions_current      | NO      |
+> | events_transactions_history      | NO      |
+> | events_transactions_history_long | NO      |
+> | events_waits_current             | NO      |
+> | events_waits_history             | NO      |
+> | events_waits_history_long        | NO      |
+> | global_instrumentation           | YES     |
+> | thread_instrumentation           | YES     |
+> | statements_digest                | YES     |
+> +----------------------------------+---------+
+> 15 rows in set (0.00 sec)
+> # 决定监控是否生效规则
+> global_instrumentation->thread_instrumentation=statements_digest->others
+> ```
 
 + wait/io/socket（默认指标和计时关闭）
 
@@ -1393,8 +1393,6 @@ table_io_waits_summary_by_table
 table_lock_waits_summary_by_table
 ```
 
-
-
 4. file_instances	
 
 ```
@@ -1405,15 +1403,6 @@ table_lock_waits_summary_by_table
 
 ```
 记录当前全局、会话、线程状态信息
-
-通常可用summary表做统计：
-mysql> SELECT EVENT_NAME, COUNT_STAR
-FROM performance_schema.events_statements_summary_global_by_event_name
-WHERE EVENT_NAME LIKE 'statement/sql/%';
-mysql> SELECT EVENT_NAME, COUNT_STAR
-FROM performance_schema.events_statements_summary_by_thread_by_event_name
-WHERE EVENT_NAME LIKE 'statement/sql/%';
-...
 ```
 
 6. global_variables、session_variables、variables_by_thread
