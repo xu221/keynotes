@@ -1561,4 +1561,167 @@ write normal
 展示当前线程定义的用户级变量
 ```
 
+> 一些监控例子
+
+1.哪类SQL执行的最多，响应时间如何，排序次数，扫描次数，创建临时表次数等等
+
+```
+mysql> desc events_statements_summary_by_digest;
++-----------------------------+---------------------+------+-----+---------------------+-------+
+| Field                       | Type                | Null | Key | Default             | Extra |
++-----------------------------+---------------------+------+-----+---------------------+-------+
+| SCHEMA_NAME                 | varchar(64)         | YES  |     | NULL                |       |
+| DIGEST                      | varchar(32)         | YES  |     | NULL                |       |
+| DIGEST_TEXT                 | longtext            | YES  |     | NULL                |       |
+| COUNT_STAR                  | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_TIMER_WAIT              | bigint(20) unsigned | NO   |     | NULL                |       |
+| MIN_TIMER_WAIT              | bigint(20) unsigned | NO   |     | NULL                |       |
+| AVG_TIMER_WAIT              | bigint(20) unsigned | NO   |     | NULL                |       |
+| MAX_TIMER_WAIT              | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_LOCK_TIME               | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_ERRORS                  | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_WARNINGS                | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_ROWS_AFFECTED           | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_ROWS_SENT               | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_ROWS_EXAMINED           | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_CREATED_TMP_DISK_TABLES | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_CREATED_TMP_TABLES      | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SELECT_FULL_JOIN        | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SELECT_FULL_RANGE_JOIN  | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SELECT_RANGE            | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SELECT_RANGE_CHECK      | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SELECT_SCAN             | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SORT_MERGE_PASSES       | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SORT_RANGE              | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SORT_ROWS               | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_SORT_SCAN               | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_NO_INDEX_USED           | bigint(20) unsigned | NO   |     | NULL                |       |
+| SUM_NO_GOOD_INDEX_USED      | bigint(20) unsigned | NO   |     | NULL                |       |
+| FIRST_SEEN                  | timestamp           | NO   |     | 0000-00-00 00:00:00 |       |
+| LAST_SEEN                   | timestamp           | NO   |     | 0000-00-00 00:00:00 |       |
++-----------------------------+---------------------+------+-----+---------------------+-------+
+```
+
+2.物理文件的逻辑读写情况
+
+```
+mysql> select FILE_NAME,COUNT_STAR from file_summary_by_instance limit 2;
++------------------------------------------------------+------------+
+| FILE_NAME                                            | COUNT_STAR |
++------------------------------------------------------+------------+
+| /home/mysql/usr/local/mysql/share/english/errmsg.sys |          5 |
+| /home/mysql/usr/local/mysql/share/charsets/Index.xml |          3 |
++------------------------------------------------------+------------+
+mysql> desc file_summary_by_instance;
++---------------------------+---------------------+------+-----+---------+-------+
+| Field                     | Type                | Null | Key | Default | Extra |
++---------------------------+---------------------+------+-----+---------+-------+
+| FILE_NAME                 | varchar(512)        | NO   |     | NULL    |       |
+| EVENT_NAME                | varchar(128)        | NO   |     | NULL    |       |
+| OBJECT_INSTANCE_BEGIN     | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_STAR                | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_WAIT            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_WAIT            | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_WAIT            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_WAIT            | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_READ                | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_READ            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_READ            | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_READ            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_READ            | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_NUMBER_OF_BYTES_READ  | bigint(20)          | NO   |     | NULL    |       |
+| COUNT_WRITE               | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_WRITE           | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_WRITE           | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_WRITE           | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_WRITE           | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_NUMBER_OF_BYTES_WRITE | bigint(20)          | NO   |     | NULL    |       |
+| COUNT_MISC                | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_MISC            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_MISC            | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_MISC            | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_MISC            | bigint(20) unsigned | NO   |     | NULL    |       |
++---------------------------+---------------------+------+-----+---------+-------+
+```
+
+3.索引使用情况：包括使用次数，查询次数，更新次数，插入次数，删除次数和响应时间等
+
+```
+mysql> select OBJECT_TYPE,OBJECT_SCHEMA,OBJECT_NAME,INDEX_NAME,COUNT_STAR,AVG_TIMER_WAIT from table_io_waits_summary_by_index_usage limit 4;
++-------------+---------------+-------------+------------+------------+----------------+
+| OBJECT_TYPE | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | COUNT_STAR | AVG_TIMER_WAIT |
++-------------+---------------+-------------+------------+------------+----------------+
+| TABLE       | clicktest     | customer    | PRIMARY    |          0 |              0 |
+| TABLE       | test          | t2          | PRIMARY    |          0 |              0 |
+| TABLE       | test          | t2          | NULL       |         24 |     4597093273 |
+| TABLE       | bencbdb10     | t1          | id0        |          0 |              0 |
++-------------+---------------+-------------+------------+------------+----------------+
+mysql> desc table_io_waits_summary_by_index_usage;
++------------------+---------------------+------+-----+---------+-------+
+| Field            | Type                | Null | Key | Default | Extra |
++------------------+---------------------+------+-----+---------+-------+
+| OBJECT_TYPE      | varchar(64)         | YES  |     | NULL    |       |
+| OBJECT_SCHEMA    | varchar(64)         | YES  |     | NULL    |       |
+| OBJECT_NAME      | varchar(64)         | YES  |     | NULL    |       |
+| INDEX_NAME       | varchar(64)         | YES  |     | NULL    |       |
+| COUNT_STAR       | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_WAIT   | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_WAIT   | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_WAIT   | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_WAIT   | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_READ       | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_READ   | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_READ   | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_READ   | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_READ   | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_WRITE      | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_WRITE  | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_WRITE  | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_WRITE  | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_WRITE  | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_FETCH      | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_FETCH  | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_FETCH  | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_FETCH  | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_FETCH  | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_INSERT     | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_INSERT | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_INSERT | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_INSERT | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_INSERT | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_UPDATE     | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_UPDATE | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_UPDATE | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_UPDATE | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_UPDATE | bigint(20) unsigned | NO   |     | NULL    |       |
+| COUNT_DELETE     | bigint(20) unsigned | NO   |     | NULL    |       |
+| SUM_TIMER_DELETE | bigint(20) unsigned | NO   |     | NULL    |       |
+| MIN_TIMER_DELETE | bigint(20) unsigned | NO   |     | NULL    |       |
+| AVG_TIMER_DELETE | bigint(20) unsigned | NO   |     | NULL    |       |
+| MAX_TIMER_DELETE | bigint(20) unsigned | NO   |     | NULL    |       |
++------------------+---------------------+------+-----+---------+-------+
+```
+
+4.等待事件消耗情况
+
+```
+mysql> select * from events_waits_summary_global_by_event_name limit 10;
++---------------------------------------------------------+------------+----------------+----------------+----------------+----------------+
+| EVENT_NAME                                              | COUNT_STAR | SUM_TIMER_WAIT | MIN_TIMER_WAIT | AVG_TIMER_WAIT | MAX_TIMER_WAIT |
++---------------------------------------------------------+------------+----------------+----------------+----------------+----------------+
+| wait/synch/mutex/sql/TC_LOG_MMAP::LOCK_tc               |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/LOCK_des_key_file                  |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit         |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit_queue   |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_done           |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_flush_queue    |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_index          |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log            |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_binlog_end_pos |          0 |              0 |              0 |              0 |              0 |
+| wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync           |          0 |              0 |              0 |              0 |              0 |
++---------------------------------------------------------+------------+----------------+----------------+----------------+----------------+
+```
+
+
+
 
