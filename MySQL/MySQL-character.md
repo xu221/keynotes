@@ -23,7 +23,7 @@
 3.字节流进入到存储环节时，由character_set_connection设定的编码规则解码字节数据，并根据字段character设定的编码规则将结果编码为字节流存入文件，若两边字符编码规则一致，则直接存储到文件中。
 ```
 
-![image-1](https://github.com/xu221/keynotes/blob/pictures/MySQL/jdbc%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5.png)
+![image-1](https://github.com/xu221/keynotes/blob/pictures/MySQL/%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BA%A4%E4%BA%92%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5.png)
 
 
 
@@ -40,11 +40,12 @@
 
 2.MySQL客户端数据输出字符
 
-1. 数据库根据字段编码规则读取存储在二进制文件中的数据，将其解码并编码为character_set_connection。
+```
+1.数据库根据字段编码规则读取存储在二进制文件中的数据，将其解码并编码为character_set_connection。
+2.字节流到达输出边界，由character_set_connection设定的编码规则解码字节数据，并根据character_set_results设定的编码规则将结果编码为字节流，传输到程序或者终端中，最后依据终端编码规则解码字节流，输出相应的字符到连接终端屏幕上。
+```
 
-2. 字节流到达输出边界，由character_set_connection设定的编码规则解码字节数据，并根据character_set_results设定的编码规则将结果编码为字节流，传输到程序或者终端中，最后依据终端编码规则解码字节流，输出相应的字符到连接终端屏幕上。
-
-![image-20210422155957431](/Users/kido/Library/Application Support/typora-user-images/image-20210422155957431.png)
+![image-2](https://github.com/xu221/keynotes/blob/pictures/MySQL/%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BA%A4%E4%BA%92%E6%95%B0%E6%8D%AE%E8%BE%93%E5%87%BA.png)
 
 3.不妨考虑以下情况
 
@@ -76,7 +77,7 @@
 假设将案例1中character_set_results设为utf8，此时输入的 "兴" 将会输出为 "å…´"，原理如下：
 ```
 
-![image-20210422160155973](/Users/kido/Library/Application Support/typora-user-images/image-20210422160155973.png)
+![image-3](https://github.com/xu221/keynotes/blob/pictures/MySQL/%E6%A1%88%E4%BE%8B.png)
 
 ```
 原因在于，字节流传入时，被character_set_client编码，应该同样使用相同编码的character_set_results对称输出。
@@ -107,7 +108,7 @@
 
 2. 举一个jdbc转码时导致乱码的例子：
 
-![image-20210428170015436](/Users/kido/Library/Application Support/typora-user-images/image-20210428170015436.png)
+![image-4](https://github.com/xu221/keynotes/blob/pictures/MySQL/jdbc%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5.png)
 
 
 
@@ -148,6 +149,8 @@ mysql-connector-java-8.0.24
         -->NativeSession.configureClientCharacterSet(false);
                this.protocol.getServerSession().getServerVariables().put("character_set_client", utf8CharsetName);            this.protocol.getServerSession().getServerVariables().put("character_set_connection", utf8CharsetName);
 ```
+
+![image-5](https://github.com/xu221/keynotes/blob/pictures/MySQL/jdbc%E8%B0%83%E7%94%A8.png)
 
 5.判断存储是否乱码
 
