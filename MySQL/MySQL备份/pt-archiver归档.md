@@ -28,31 +28,7 @@ table3
 
 4.使用pt-archiver归档数据
 
-```mermaid
-sequenceDiagram
- participant A as db1(ip1:3306)
- participant J as db1-history(ip2:3306)
-
-rect rgba(0, 0,255,0.4)
-A ->> +J: start
-NOTE OVER A:table1
-A -->> J: pt-archiver >>
-NOTE OVER J:table1_history
-
-NOTE OVER A:table2
-A -->> J: pt-archiver >>
-NOTE OVER J:table2_history
-
-NOTE OVER A:table3
-A -->> J: pt-archiver >>
-NOTE OVER J:table3_history
-A --> J: ...
-J-->> -A:over
-end
-
-
-```
-
+![image-1](https://github.com/xu221/keynotes/blob/pictures/MySQL/%E5%A4%9A%E8%A1%A8%E8%BF%81%E7%A7%BB.png)
 
 
 ```
