@@ -1234,7 +1234,7 @@ mysql> select name from setup_instruments;
   -->performance_schema.events_transactions_history_long
   ```
 
-> 上述四类表依旧具备收集开关，由performance_schema.setup_consumers表决定
+> 上述四类表具备表级别收集开关，由performance_schema.setup_consumers表设置
 >
 > ```
 > mysql> select * from setup_consumers;
