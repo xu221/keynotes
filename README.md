@@ -8,10 +8,11 @@
 > > 
 > > MySQL原理
 > > + 字符集
-> > + undo
+> > + UNDO
 > > + 事务并发控制
 > > + 行锁
-> > 
+> > + ONLINE DDL
+> >
 > > MySQL备份
 > > + pt-archiver
 > > + xtrabackup
