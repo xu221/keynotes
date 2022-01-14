@@ -634,7 +634,7 @@ db.createRole
         resource: { db: "testdb", collection: "" }, 
         actions: [ "update", "insert", "remove", "createCollection", "renameCollectionSameDB", "dropCollection", "createIndex", "dropIndex" ]
         }],
-    roles: []  
+    roles: [{"role": "read", "db": "testdb"}]  
 }    
 )
 # use哪个库就在哪个库下建角色
@@ -650,7 +650,7 @@ db.updateRole('udf_readWrite',
         resource: { db: "testdb", collection: "" }, 
         actions: [ "update", "insert", "remove", "createCollection", "renameCollectionSameDB", "dropCollection", "createIndex", "dropIndex" ] 
         }],    
-    roles: [{"role": "read", "db": "test"}]
+    roles: [{"role": "read", "db": "testdb"}]
 }
 )
 # roles为继承用户列表
