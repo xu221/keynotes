@@ -4,6 +4,8 @@ from pymongo import InsertOne, DeleteOne, ReplaceOne, UpdateOne, DeleteMany
 from pymongo.errors import BulkWriteError
 import time, json
 import bson.timestamp
+from rich.table import Table
+from rich.console import Console
 
 
 def func1():
@@ -44,12 +46,19 @@ def func2():
 
 def func3():
     """
-    比对两个字典
+    统计指定库的所有文档记录数
     """
+    client = MongoClient('mongodb://127.0.0.1:27017/')
+    db_dictionary = {}
+    collention_dictionary = {}
+    for collection in client['mission'].list_collection_names():
+        collention_dictionary[collection] = client[db][collection].estimated_document_count()
+    db_dictionary['mission'] = collention_dictionary
+    return db_dictionary
 
 def func4(connection_url):
     """
-    计算库内所有文档记录数
+    统计库内所有文档记录数
     """
     client = MongoClient(connection_url)
     db_dictionary = {}
@@ -72,6 +81,26 @@ def func5():
     for i in c.rs.find({"$and":[{"ns": {"$regex": r"^(?!^config)(?!^admin)(?!^$)"}},{"ts": {"$gt" : bson.timestamp.Timestamp(pas_timestamp,1) }}]}):
         result[i["ns"]]=i["wall"].strftime("%Y-%m-%d %H:%M:%S")
     print(json.dumps(result, indent=4))
+
+def compare_dictionary(d1: dict, d2: dict, db: str) ->print: 
+    """
+    字典对比函数
+    """
+    console = Console()
+    table = Table(show_header=True, show_lines=True, header_style="bold magenta",)
+    table.add_column("集合")
+    table.add_column("源库-" + db, justify="left")
+    table.add_column("对比库-" + db, justify="left")
     
+    for i in set(d1.keys()).difference(set(d2.keys())):
+        table.add_row(i, json.dumps(d1[i], indent=4), '')
+    for i in set(d2.keys()).difference(set(d1.keys())):
+        table.add_row(i, '', json.dumps(d2[i], indent=4))
+    for i in set(d1.keys()).intersection(set(d2.keys())):
+        if d1[i] != d2[i]:
+            table.add_row(i, json.dumps(d1[i], indent=4), json.dumps(d2[i], indent=4))
+    
+    console.print(table)
+
 if __name__ == "__main__":
     func4("mongodb://x21:x21@127.0.0.1:27017/?authSource=admin")
