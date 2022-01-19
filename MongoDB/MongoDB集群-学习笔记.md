@@ -418,7 +418,7 @@ wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel80-x86_64-10
 1.备份指定库
 
 ```
-mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba -d testdb1 -o /root/mongosbakup
+mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 -o /root/mongosbakup
 ```
 
 2.备份所有库
@@ -444,7 +444,7 @@ mongoexport --host 127.0.0.1 --port 20004 -d testdb1 -c tb -o /root/mongosbakup/
 1.恢复指定库
 
 ```
-mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba -d testdb1 --dir=/root/mongosbakup/testdb1
+mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 --dir=/root/mongosbakup/testdb1
 ```
 
 2.恢复所有库
