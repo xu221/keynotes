@@ -67,7 +67,7 @@ def timeblock(label):
         end = time.perf_counter()
         print('{} : {}'.format(label, end - start))
 
-def tabledata_select2insert(tablename, connection_source, connection_destination, chunksize=100, thread_num=2, indexcolumn="ID"):
+def tabledata_select2insert(tablename, connection_source, connection_destination, chunksize=100, parallel=2, indexcolumn="ID"):
     connection_temp = pymysql.connect( host=connection_source["host"],
                                     user=connection_source["user"],
                                     password=connection_source["password"],
@@ -125,18 +125,18 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
             cursor.execute("SELECT MAX({0}) FROM {1}".format(indexcolumn, tablename))
             max_value = cursor.fetchall()[0][0]
     try:
-        with ThreadPoolExecutor(max_workers=thread_num*2) as executor:
+        with ThreadPoolExecutor(max_workers=parallel*2) as executor:
             temp_pipe = deque()
             ranges = []
             result = True
-            for i in range(thread_num):
-                if i == (thread_num-1):
-                    ranges.append((i*round((max_value-min_value)/thread_num) + min_value, max_value+1))
+            for i in range(parallel):
+                if i == (parallel-1):
+                    ranges.append((i*round((max_value-min_value)/parallel) + min_value, max_value+1))
                 else:
-                    ranges.append((i*round((max_value-min_value)/thread_num) + min_value, (i+1)*(round((max_value-min_value)/thread_num)) + min_value))
+                    ranges.append((i*round((max_value-min_value)/parallel) + min_value, (i+1)*(round((max_value-min_value)/parallel)) + min_value))
             print(ranges)
             future_producer = [executor.submit(producer, pymysql.connect(host=connection_source["host"],user=connection_source["user"],passwd=connection_source["password"],database=connection_source["database"], cursorclass = pymysql.cursors.SSCursor), tablename, chunksize, temp_pipe, rg[0], rg[1]) for rg in ranges]
-            future_customer = [executor.submit(customer, pymysql.connect(host=connection_destination["host"],user=connection_destination["user"],passwd=connection_destination["password"],database=connection_destination["database"]), sql_i, temp_pipe) for _ in range(thread_num) ]
+            future_customer = [executor.submit(customer, pymysql.connect(host=connection_destination["host"],user=connection_destination["user"],passwd=connection_destination["password"],database=connection_destination["database"]), sql_i, temp_pipe) for _ in range(parallel) ]
             for i in as_completed(future_producer):
                 if i.exception():
                     print(i.exception())
@@ -163,14 +163,14 @@ def find_all_tables(connection_source):
             cursor_source.execute("show tables")
             return [table[0] for table in cursor_source.fetchall()]
 
-def fulldatabackup(tablename, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2, indexcolumn = "ID"):
+def fulldatabackup(tablename, source_connection, destination_connection, sqlstreamer, chunksize=1000, parallel=2, indexcolumn = "ID"):
     with timeblock("     cost-time"):
         readytable = "{0}.{1}".format(source_connection["database"], tablename)
         sqlstreamer.preparequeue.append(readytable)
         while not sqlstreamer.targettable.get(readytable):
             time.sleep(1)
         time.sleep(1)
-        result = tabledata_select2insert(tablename, source_connection, destination_connection, chunksize, thread_num, indexcolumn)
+        result = tabledata_select2insert(tablename, source_connection, destination_connection, chunksize, parallel, indexcolumn)
         if result:
             print("{0} is copied fully!".format(readytable), end='')
             sqlstreamer.applyqueue.append(readytable)
@@ -219,4 +219,4 @@ if __name__ == "__main__":
     with ThreadPoolExecutor(max_workers=20) as executor:                                                                                                  
         future_binlog = executor.submit(binlogbackup, sqlstreamer.produce_sqls()).add_done_callback(future_call_back)                                     # binlog备份线程
         future_apply = executor.submit(deltaapply, sqlstreamer.customer_sqls(destination_connection, 1000)).add_done_callback(future_call_back)           # binlog应用线程 
-        futures = [executor.submit(fulldatabackup, table, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2, indexcolumn="col").add_done_callback(future_call_back) for table in tables]
+        futures = [executor.submit(fulldatabackup, table, source_connection, destination_connection, sqlstreamer, chunksize=1000, parallel=2, indexcolumn="col").add_done_callback(future_call_back) for table in tables]
