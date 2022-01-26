@@ -67,23 +67,15 @@ def timeblock(label):
         end = time.perf_counter()
         print('{} : {}'.format(label, end - start))
 
-def tabledata_select2insert(tablename, connection_source, connection_destination, chunksize=100, thread_num=2):
+def tabledata_select2insert(tablename, connection_source, connection_destination, chunksize=100, thread_num=2, indexcolumn="ID"):
     connection_temp = pymysql.connect( host=connection_source["host"],
                                     user=connection_source["user"],
                                     password=connection_source["password"],
                                     database=connection_source["database"],
                                     cursorclass = pymysql.cursors.SSCursor)
-
-    with connection_temp:
-        with connection_temp.cursor() as cursor:
-            cursor.execute("SHOW VARIABLES LIKE 'max_allowed_packet%'")
-            print(cursor.fetchall())
-            sql_temp = "select * from {0} limit 1".format(tablename)
-            cursor.execute(sql_temp)
-            sql_i = "insert into {0}({1}) values({2})".format(tablename,','.join(i[0] for i in cursor.description),','.join('%s' for i in range(len(cursor.description))))
-
+    
     def producer(connection_s, tablename, chunksize, p_pipe, lower_limit, upper_limit):
-        sql_s = "select * from {0} where id > {1} and id <= {2}".format(tablename, lower_limit, upper_limit)
+        sql_s = "select * from {0} where {3} >= {1} and {3} < {2}".format(tablename, lower_limit, upper_limit, indexcolumn)
         print(sql_s)
         with connection_s:
             with connection_s.cursor() as cursor_source:
@@ -107,7 +99,6 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
                 cursor_destination.execute("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;")
                 cursor_destination.execute("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;")
                 cursor_destination.execute("/*!40000 ALTER TABLE `{0}` DISABLE KEYS */;".format(tablename))
-
                 while True:
                     print(len(c_pipe))
                     if c_pipe:
@@ -121,17 +112,28 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
                         print(time.perf_counter() - start)
                     else:
                         time.sleep(0.5)
+    
+    with connection_temp:
+        with connection_temp.cursor() as cursor:
+            cursor.execute("SHOW VARIABLES LIKE 'max_allowed_packet%'")
+            print(cursor.fetchall())
+            cursor.execute("SHOW COLUMNS FROM {0}".format(tablename))
+            columns = cursor.fetchall()
+            sql_i = "insert into {0}({1}) values({2})".format(tablename,','.join(i[0] for i in columns),','.join('%s' for _ in range(len(columns))))
+            cursor.execute("SELECT MIN({0}) FROM {1}".format(indexcolumn, tablename))
+            min_value = cursor.fetchall()[0][0]
+            cursor.execute("SELECT MAX({0}) FROM {1}".format(indexcolumn, tablename))
+            max_value = cursor.fetchall()[0][0]
     try:
         with ThreadPoolExecutor(max_workers=thread_num*2) as executor:
             temp_pipe = deque()
             ranges = []
-            max_value = 10000
             result = True
             for i in range(thread_num):
                 if i == (thread_num-1):
-                    ranges.append((i*round(max_value/thread_num), max_value))
+                    ranges.append((i*round((max_value-min_value)/thread_num) + min_value, max_value+1))
                 else:
-                    ranges.append((i*round(max_value/thread_num), (i+1)*(round(max_value/thread_num))))
+                    ranges.append((i*round((max_value-min_value)/thread_num) + min_value, (i+1)*(round((max_value-min_value)/thread_num)) + min_value))
             print(ranges)
             future_producer = [executor.submit(producer, pymysql.connect(host=connection_source["host"],user=connection_source["user"],passwd=connection_source["password"],database=connection_source["database"], cursorclass = pymysql.cursors.SSCursor), tablename, chunksize, temp_pipe, rg[0], rg[1]) for rg in ranges]
             future_customer = [executor.submit(customer, pymysql.connect(host=connection_destination["host"],user=connection_destination["user"],passwd=connection_destination["password"],database=connection_destination["database"]), sql_i, temp_pipe) for _ in range(thread_num) ]
@@ -140,12 +142,12 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
                     print(i.exception())
                     result = False
             temp_pipe.append("over")
-            print("---------------produce over--------------")
+            print("produce over--------------")
             for i in as_completed(future_customer):
                 if i.exception():
                     print(i.exception())
                     result = False
-            print("--------------customer over--------------")
+            print("--------------customer over")
             return result
     except Exception as e:
         print(e)
@@ -161,14 +163,14 @@ def find_all_tables(connection_source):
             cursor_source.execute("show tables")
             return [table[0] for table in cursor_source.fetchall()]
 
-def fulldatabackup(tablename, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2):
+def fulldatabackup(tablename, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2, indexcolumn = "ID"):
     with timeblock("     cost-time"):
         readytable = "{0}.{1}".format(source_connection["database"], tablename)
         sqlstreamer.preparequeue.append(readytable)
         while not sqlstreamer.targettable.get(readytable):
             time.sleep(1)
         time.sleep(1)
-        result = tabledata_select2insert(tablename, source_connection, destination_connection, chunksize, thread_num)
+        result = tabledata_select2insert(tablename, source_connection, destination_connection, chunksize, thread_num, indexcolumn)
         if result:
             print("{0} is copied fully!".format(readytable), end='')
             sqlstreamer.applyqueue.append(readytable)
@@ -217,4 +219,4 @@ if __name__ == "__main__":
     with ThreadPoolExecutor(max_workers=20) as executor:                                                                                                  
         future_binlog = executor.submit(binlogbackup, sqlstreamer.produce_sqls()).add_done_callback(future_call_back)                                     # binlog备份线程
         future_apply = executor.submit(deltaapply, sqlstreamer.customer_sqls(destination_connection, 1000)).add_done_callback(future_call_back)           # binlog应用线程 
-        futures = [executor.submit(fulldatabackup, table, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2).add_done_callback(future_call_back) for table in tables]
+        futures = [executor.submit(fulldatabackup, table, source_connection, destination_connection, sqlstreamer, chunksize=1000, thread_num=2, indexcolumn="col").add_done_callback(future_call_back) for table in tables]
