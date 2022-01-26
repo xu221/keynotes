@@ -19,7 +19,7 @@
 > >  
 > > MySQL异步数仓
 > > + clickhouse
-> > + pymysqlreplication
+> > + 数据同步
 > > 
 > > MySQL监控
 > > + performance_schema
