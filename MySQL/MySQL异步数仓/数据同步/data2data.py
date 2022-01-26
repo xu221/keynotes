@@ -126,7 +126,7 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
             max_value = cursor.fetchall()[0][0]
     try:
         with ThreadPoolExecutor(max_workers=parallel*2) as executor:
-            temp_pipe = deque()
+            temp_pipe = deque(maxlen=100)
             ranges = []
             result = True
             for i in range(parallel):
