@@ -36,4 +36,4 @@
 > > 爬虫
 > > + selenium
 
-> **Shell**
+> **Linux**
