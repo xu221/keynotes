@@ -12,7 +12,9 @@
 > > + 事务并发控制
 > > + 行锁
 > > + ONLINE DDL
-> >
+> > + REDO
+> > + ACID 
+> > 
 > > MySQL备份
 > > + pt-archiver
 > > + xtrabackup
