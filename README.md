@@ -1,5 +1,5 @@
 > **MongoDB**
-> + MongoDB集群运维.md
+> + MongoDB集群运维
 
 > **MySQL**
 > > MySQL压测
