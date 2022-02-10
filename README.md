@@ -14,7 +14,8 @@
 > > + ONLINE DDL
 > > + REDO
 > > + ACID 
-> > 
+> > + 参数详解
+> >
 > > MySQL备份
 > > + pt-archiver
 > > + xtrabackup
