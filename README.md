@@ -1,7 +1,7 @@
-> **MongoDB**
+> [**MongoDB**](./MongoDB)
 > + MongoDB集群运维
 
-> **MySQL**
+> [**MySQL**](./MySQL)
 > > [MySQL压测](./MySQL/MySQL压测)
 > > + MySQL性能对比测试
 > > + TPC-H
@@ -34,7 +34,7 @@
 > > + SQL类
 > > + linux类
 
-> **Python开发**
+> [**Python开发**](./Python)
 > > [多线程](./Python/多线程)
 > > 
 > > [数据库驱动](./Python/数据库驱动)
