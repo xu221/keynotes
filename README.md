@@ -2,11 +2,11 @@
 > + MongoDB集群运维
 
 > **MySQL**
-> > MySQL压测
+> > [MySQL压测](./MySQL/MySQL压测)
 > > + MySQL性能对比测试
 > > + TPC-H
 > > 
-> > MySQL原理
+> > [MySQL原理](./MySQL/MySQL原理)
 > > + 字符集
 > > + UNDO
 > > + 事务并发控制
@@ -16,31 +16,31 @@
 > > + ACID 
 > > + 参数详解
 > >
-> > MySQL备份
+> > [MySQL备份](./MySQL/MySQL备份)
 > > + pt-archiver
 > > + xtrabackup
 > >  
-> > MySQL异步数仓
+> > [MySQL异步数仓](./MySQL/MySQL异步数仓)
 > > + clickhouse
 > > + 数据同步
 > > 
-> > MySQL监控
+> > [MySQL监控](./MySQL/MySQL监控)
 > > + performance_schema
 > >
-> > MySQL高可用架构
+> > [MySQL高可用架构](./MySQL/MySQL高可用架构)
 > > + MHA
 > >
 > > [MySQL运维脚本](./MySQL/MySQL运维脚本)
-> > SQL类
-> > linux类
+> > + SQL类
+> > + linux类
 
 > **Python开发**
-> > 多线程
+> > [多线程](./Python/多线程)
 > > 
-> > 数据库驱动
+> > [数据库驱动](./Python/数据库驱动)
 > > + pymongo
 > >
-> > 爬虫
+> > [爬虫](./Python/爬虫)
 > > + selenium
 
-> **Linux**
+> [**Linux**](./Linux)
