@@ -29,6 +29,10 @@
 > >
 > > MySQL高可用架构
 > > + MHA
+> >
+> > [MySQL运维脚本](./MySQL/MySQL运维脚本)
+> > SQL类
+> > linux类
 
 > **Python开发**
 > > 多线程
