@@ -586,45 +586,12 @@ db.getSiblingDB("dbname").dropDatabase();
 
 > 用户权限相关:mongodb,每个用户和角色都在各自数据库范围下
 
-1.创建用户
 
-```shell
-use admin
-db.createUser( {user: "",pwd: "",roles: [ { role: "readAnyDatabase", db: "admin" } ]});
-use admin
-db.createUser( {user: "x21",pwd: "x21",roles: [ { role: "root", db: "admin" } ]});
-# use哪个库就在哪个库下建用户
-```
 
-2.查看用户
+1.创建角色
 
 ```shell
 use testdb
-show users
-```
-
-3.删除权限
-
-```shell
-db.revokeRolesFromUser('userlocal',[{role : "udf_readWrite",db : "testdb"}])
-```
-
-4.增加权限
-
-```shell
-db.grantRolesToUser("userlocal",[{role:"udf_readWrite",db:"testdb"}])
-```
-
-5.查看权限
-
-```shell
-db.getUser('userlocal')
-```
-
-6.创建角色
-
-```shell
-use admin
 db.createRole
 (    
 {    
@@ -640,9 +607,49 @@ db.createRole
 # use哪个库就在哪个库下建角色
 ```
 
-7.修改角色
+2.创建用户
 
 ```shell
+use testdb
+db.createUser( {user: "",pwd: "",roles: [ { role: "readAnyDatabase", db: "testdb" } ]});
+use testdb
+db.createUser( {user: "",pwd: "",roles: [ { role: "read", db: "testdb" } ]});
+use admin
+db.createUser( {user: "x21",pwd: "x21",roles: [ { role: "root", db: "testdb" } ]});
+# use哪个库就在哪个库下建用户,roles为继承用户
+```
+
+3.查看用户
+
+```shell
+use testdb
+show users
+```
+4.查看用户权限
+
+```shell
+use testdb
+db.getUser('userlocal')
+```
+
+4.删除角色
+
+```shell
+use testdb
+db.revokeRolesFromUser('userlocal',[{role : "udf_readWrite",db : "testdb"}])
+```
+
+5.增加角色
+
+```shell
+use testdb
+db.grantRolesToUser("userlocal",[{role:"udf_readWrite",db:"testdb"}])
+```
+
+6.修改角色权限
+
+```shell
+use testdb
 db.updateRole('udf_readWrite',
 {
     privileges: 
@@ -653,13 +660,12 @@ db.updateRole('udf_readWrite',
     roles: [{"role": "read", "db": "testdb"}]
 }
 )
-# roles为继承用户列表
 ```
 
-8.检查角色
+8.查看角色权限
 
 ```shell
-use admin
+use testdb
 db.system.roles.find()
 # 查看权限
 use dbname
