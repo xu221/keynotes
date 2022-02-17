@@ -516,7 +516,7 @@ db.shutdownServer()
 1.先启动config分片副本集
 
 ```shell
-/root/services/ mongodb-5.0.3-config-host1/bin/mongod --config=/root/services/ mongodb-5.0.3-config-host1/mongodb.conf --fork
+/root/services/mongodb-5.0.3-config-host1/bin/mongod --config=/root/services/mongodb-5.0.3-config-host1/mongodb.conf --fork
 ```
 
 2.再启动shard分片副本集
