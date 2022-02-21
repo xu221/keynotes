@@ -82,6 +82,16 @@ def func5():
         result[i["ns"]]=i["wall"].strftime("%Y-%m-%d %H:%M:%S")
     print(json.dumps(result, indent=4))
 
+def func6(connection_url, destination_url):
+    """
+    数据抽取
+    """
+    client_source = MongoClient(connection_url)
+    client_destin = MongoClient(destination_url)
+    collection_source = client_source['testdb2']['tb']
+    collection_destin = client_destin['testdb2']['tb_copy'] 
+    collection_destin.insert_many(collection_source.find({"id": {"$gte": 10000, "$lt": 20000}}))
+
 def compare_dictionary(d1: dict, d2: dict, db: str) ->print: 
     """
     字典对比函数
@@ -102,5 +112,7 @@ def compare_dictionary(d1: dict, d2: dict, db: str) ->print:
     
     console.print(table)
 
+
 if __name__ == "__main__":
+    func6('mongodb://127.0.0.1:27020', 'mongodb://127.0.0.1:27020')
     func4("mongodb://x21:x21@127.0.0.1:27017/?authSource=admin")
