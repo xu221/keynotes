@@ -592,8 +592,7 @@ db.getSiblingDB("dbname").dropDatabase();
 
 ```shell
 use testdb
-db.createRole
-(    
+db.createRole(    
 {    
     role: "udf_readWrite",    
     privileges: 
