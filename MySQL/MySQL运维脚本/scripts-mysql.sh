@@ -41,3 +41,10 @@ mysqlbinlog -R -vv -h'' -u'' -p'' --start-datetime='2020-11-17 14:20:10' --stop-
 # <将多行SQL合并为一个INSERT语句>
 awk -F'VALUES' '{if(NR>1) print $2;else print $0 }' abs.sql | sed -r '$s/;[[:space:]]*$//' | sed -r "s/;[[:space:]]*$/,/" > d.log
 # </>
+
+# <从SQL文件中过滤出想要的建表语句(比如：以_0000结尾)>
+# 方式一
+cat createdb.sql | sed ':a;N;$!ba;s/\r\n//g' | sed 's/;/;\n/g' | sed 's/CREATE/\nCREATE/g' |grep '_0000' > result.sql
+# 方式二
+cat createdb.sql | tr "\r\n" " " | sed 's/;/;\n/g' | sed 's/CREATE/\nCREATE/g' | grep '_0000' > resultc.sql
+# </>
