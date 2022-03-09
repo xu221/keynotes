@@ -8,11 +8,7 @@ from collections import deque
 from scheduler import Scheduler, timeblock
 
 def tabledata_select2insert(tablename, connection_source, connection_destination, chunksize=100, parallel=2, indexcolumn="ID"):
-    connection_temp = pymysql.connect( host=connection_source["host"],
-                                    user=connection_source["user"],
-                                    password=connection_source["password"],
-                                    database=connection_source["database"],
-                                    cursorclass = pymysql.cursors.SSCursor)
+    connection_temp = pymysql.connect(**connection_source, cursorclass = pymysql.cursors.SSCursor)
     
     def producer(connection_s, tablename, chunksize, p_pipe, lower_limit, upper_limit):
         sql_s = "select * from {0} where {3} >= {1} and {3} < {2}".format(tablename, lower_limit, upper_limit, indexcolumn)
@@ -75,8 +71,8 @@ def tabledata_select2insert(tablename, connection_source, connection_destination
                 else:
                     ranges.append((i*round((max_value-min_value)/parallel) + min_value, (i+1)*(round((max_value-min_value)/parallel)) + min_value))
             print(ranges)
-            future_producer = [executor.submit(producer, pymysql.connect(host=connection_source["host"],user=connection_source["user"],passwd=connection_source["password"],database=connection_source["database"], cursorclass = pymysql.cursors.SSCursor), tablename, chunksize, temp_pipe, rg[0], rg[1]) for rg in ranges]
-            future_customer = [executor.submit(customer, pymysql.connect(host=connection_destination["host"],user=connection_destination["user"],passwd=connection_destination["password"],database=connection_destination["database"]), sql_i, temp_pipe) for _ in range(parallel) ]
+            future_producer = [executor.submit(producer, pymysql.connect(**connection_source, cursorclass = pymysql.cursors.SSCursor), tablename, chunksize, temp_pipe, rg[0], rg[1]) for rg in ranges]
+            future_customer = [executor.submit(customer, pymysql.connect(**connection_destination]), sql_i, temp_pipe) for _ in range(parallel) ]
             for i in as_completed(future_producer):
                 if i.exception():
                     print(i.exception())
