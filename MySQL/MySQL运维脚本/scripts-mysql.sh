@@ -48,3 +48,7 @@ cat createdb.sql | sed ':a;N;$!ba;s/\r\n//g' | sed 's/;/;\n/g' | sed 's/CREATE/\
 # 方式二
 cat createdb.sql | tr "\r\n" " " | sed 's/;/;\n/g' | sed 's/CREATE/\nCREATE/g' | grep '_0000' > resultc.sql
 # </>
+
+# <mysqldump开启RR事务导出数据>
+mysqldump -u'' -p'' -h'xx' --set-gtid-purged=OFF --single-transaction --no-create-info --hex-blob --complete-insert db_00 > db.sql
+# </>
