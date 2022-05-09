@@ -101,7 +101,7 @@
 
 ```
 1.jvm虚拟机用编译时设定的编码规则或者web容器编码规则读取传入的字节流解码为数据字符。
-2.jdbc会用characterEncoding指定规则编码数据字符(set names xx)：即设置数据库会话级别的character_set_client，character_set_connection字符集，以及character_set_result。
+2.jdbc会用characterEncoding指定规则编码外部应用传入的数据字符(可能是设置了character_set_client、character_set_connection类似)。
 3.如果characterEncoding未设置，则会自动选择数据库服务器character_set_server值，作为字符编码。
 4.如何使用utf8mb4:
   如果用的是java服务器，升级或确保你的mysql connector版本不低于5.1.13，否则不支持utf8mb4；
