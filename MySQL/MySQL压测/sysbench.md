@@ -24,7 +24,7 @@ CREATE TABLE sbtest%d(
 ```
 ```
 
-3.压测SQL,同样在oltp_common.lua文件中:
+3.压测SQL，同样在oltp_common.lua文件中:
 ```
 local stmt_defs = {
    point_selects = {
