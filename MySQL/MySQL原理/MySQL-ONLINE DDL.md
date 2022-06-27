@@ -29,3 +29,10 @@ Trigger based migration, bound to server: 触发器和源操作还是在同一�
 ```
 MySQL的InnoDB引擎参数innodb_online_alter_log_max_size控制执行期间的增量日志。
 ```
+
+```
+关于修改字符集，都是全表加只读锁，选择无锁变更工具执行。
+ALTER TABLE `sbtest1` MODIFY COLUMN `pad` CHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '修改字段默认字符集';
+ALTER TABLE `sbtest1` CONVERT TO CHARACTER SET utf8mb4 COLLATE UTF8MB4_UNICODE_CI COMMENT '修改表默认字符集';
+ALTER TABLE `sbtest1` CHANGE `pad` `pad` CHAR(60) CHARACTER SET utf8mb4 COLLATE UTF8MB4_UNICODE_CI COMMENT '修改字段默认字符集';
+```
