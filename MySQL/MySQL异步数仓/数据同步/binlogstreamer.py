@@ -87,7 +87,7 @@ class BinLogProcesser():
                 if target_table in self.targettable:
                     if isinstance(binlogevent, DeleteRowsEvent):      #删除SQL
                         for row in binlogevent.rows:
-                            template = 'DELETE FROM `{0}` WHERE {1} LIMIT 1;'.format(
+                            template = '/* x21:del */ DELETE FROM `{0}` WHERE {1} LIMIT 1;'.format(
                             # binlogevent.schema, 
                             binlogevent.table, 
                             self.sql_turn('delete', row['values'])
@@ -96,7 +96,7 @@ class BinLogProcesser():
 
                     elif isinstance(binlogevent, WriteRowsEvent):     #插入SQL
                         for row in binlogevent.rows:
-                            template = 'INSERT INTO `{0}` VALUES ({1});'.format(
+                            template = '/* x21:ins */ INSERT INTO `{0}` VALUES ({1});'.format(
                             # binlogevent.schema, 
                             binlogevent.table, 
                             self.sql_turn('insert', row['values'])
@@ -105,7 +105,7 @@ class BinLogProcesser():
 
                     else:                                             #更新SQL
                         for row in binlogevent.rows:
-                            template = 'UPDATE `{0}` SET {1} WHERE {2} LIMIT 1;'.format(
+                            template = '/* x21:update */ UPDATE `{0}` SET {1} WHERE {2} LIMIT 1;'.format(
                             # binlogevent.schema, 
                             binlogevent.table, 
                             self.sql_turn('update', row['after_values']),
