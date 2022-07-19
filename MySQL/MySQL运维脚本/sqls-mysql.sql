@@ -1,5 +1,7 @@
 -- 批量查杀会话
 SELECT CONCAT('kill ', id, ';') FROM information_schema.`PROCESSLIST` WHERE INFO LIKE 'SELECT wc.corp_id%' ;
+SELECT db, USER, COUNT(*) FROM information_schema.processlist GROUP BY USER;
+SELECT CONCAT('kill ',ID, ';') FROM information_schema.processlist WHERE db = 'interstellar_00' AND COMMAND='Sleep';
 
 -- 统计数据库占用的磁盘空间
 SELECT TABLE_SCHEMA AS DB_NAME, 
