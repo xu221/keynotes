@@ -35,7 +35,10 @@
 > > [MySQL运维脚本](./MySQL/MySQL运维脚本)
 > > + SQL类
 > > + linux类
-
+> >
+> > [MySQL运维笔记](./MySQL/MySQL运维笔记)
+> > + note
+> >
 > [**Python开发**](./Python)
 > > [并发并行编程](./Python/并发并行编程)
 > > + 多线程
