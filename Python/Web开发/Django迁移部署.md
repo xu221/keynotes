@@ -94,7 +94,10 @@ DATABASES = {
 ```
 python3 manage.py runserver 0:8001
 
+
 > HTTPS部署
+
+
 1.用openssl生成个人用证书(3650days)
 ```
 openssl genrsa -out server.key 1024
@@ -106,6 +109,8 @@ openssl x509 -req -in server.csr -out server.crt -signkey server.key -days 3650
 ```
 pip install daphne
 ```
+
+
 ```
 nohup python3 manage.py runsslserver 0:8000 --certificate ./server.crt --key ./server.key > django_server.log &
 nohup daphne -e ssl:9000:privateKey=./server.key:certKey=./server.crt webpl.asgi:application -v2 > daphne_wss.log &
