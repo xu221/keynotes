@@ -59,6 +59,7 @@ python3 manage.py runserver 0:8001
 ```
 
 > 全量迁移
+
 1.数据迁移
 ```
 mysql data -> mysql data
