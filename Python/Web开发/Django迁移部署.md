@@ -93,7 +93,7 @@ DATABASES = {
 5.启动它
 ```
 python3 manage.py runserver 0:8001
-
+```
 
 > HTTPS部署
 
