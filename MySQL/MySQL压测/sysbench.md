@@ -22,6 +22,11 @@ CREATE TABLE sbtest%d(
 
 2.针对MySQL则直接编译即可:
 ```
+./autogen.sh
+# Add --with-pgsql to build with PostgreSQL support
+./configure
+make -j
+make install
 ```
 
 3.压测SQL，同样在oltp_common.lua文件中:
