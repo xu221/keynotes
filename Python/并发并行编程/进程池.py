@@ -1,0 +1,39 @@
+import concurrent.futures
+import time
+import signal
+import os
+
+def killsubprocess_handler(signum, fragma):  # 击杀进程池中的进程
+    print('Signal handler called with signal', signum)
+    raise SystemExit
+
+def slow_op(*args):
+    try:
+        print(f"arguments: {args}")
+        time.sleep(5)
+        print("slow operation complete")
+        current_pid = os.getpid()
+        print(current_pid)
+        # current_pid用于主进程调用os.kill(pid, signal.SIGINT)
+        # 这里涉及一个进程空间变量不共享，所以需要用文件创建file.pid或者数据库等持久化介质进行通信
+        signal.signal(signal.SIGINT, killsubprocess_handler) # 注册击杀地址
+        return 123
+    except SystemExit:
+        pass
+
+def do_something():
+    with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
+        tasks = []
+        future = pool.submit(slow_op, "a", "b", "c")
+        tasks.append(future)
+        future = pool.submit(slow_op, "a", "b")
+        tasks.append(future)
+        for fut in concurrent.futures.as_completed(tasks):
+            assert fut.done() and not fut.cancelled()
+            print(f"got the result from slow_op: {fut.result()}")
+
+
+if __name__ == "__main__":
+    print("program started")
+    do_something()
+    print("program complete")
