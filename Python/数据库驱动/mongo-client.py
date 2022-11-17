@@ -112,6 +112,44 @@ def compare_dictionary(d1: dict, d2: dict, db: str) ->print:
     
     console.print(table)
 
+def initShardMongodb(connection_url, dbname, username, passwd):
+    """
+    建分片库
+    """
+    udf_role = {
+        "role": "udf_readWrite",
+        "privileges":
+        [{
+        "resource": { "db": dbname, "collection": "" },
+        "actions": [ "update", "insert", "remove", "createCollection", "renameCollectionSameDB", "dropCollection", "createIndex", "dropIndex" ]
+        }],
+        "roles": [{"role": "read", "db": dbname}]
+    }
+    db_user= {"user": username,"pwd": passwd,"roles": [ { "role": "udf_readWrite", "db": dbname } ]}
+
+    client_source = MongoClient(connection_url)
+    client_source["admin"].command("enableSharding", dbname)
+    client_source[dbname].command("createRole", udf_role["role"], privileges=udf_role["privileges"], roles=udf_role["roles"])
+    client_source[dbname].command("createUser", db_user["user"], pwd=db_user["pwd"], roles=db_user["roles"])
+
+def initSingleMongodb(connection_url, dbname, username, passwd):
+    """
+    建单库
+    """
+    udf_role = {
+        "role": "udf_readWrite",
+        "privileges":
+        [{
+        "resource": { "db": dbname, "collection": "" },
+        "actions": [ "update", "insert", "remove", "createCollection", "renameCollectionSameDB", "dropCollection", "createIndex", "dropIndex" ]
+        }],
+        "roles": [{"role": "read", "db": dbname}]
+    }
+    db_user= {"user": username,"pwd": passwd,"roles": [ { "role": "udf_readWrite", "db": dbname } ]}
+
+    client_source = MongoClient(connection_url)
+    client_source[dbname].command("createRole", udf_role["role"], privileges=udf_role["privileges"], roles=udf_role["roles"])
+    client_source[dbname].command("createUser", db_user["user"], pwd=db_user["pwd"], roles=db_user["roles"])
 
 if __name__ == "__main__":
     func6('mongodb://127.0.0.1:27020', 'mongodb://127.0.0.1:27020')
