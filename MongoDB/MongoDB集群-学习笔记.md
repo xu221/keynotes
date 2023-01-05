@@ -582,6 +582,18 @@ sh.enableSharding("dbname", "primary_shard_id");
 db.getSiblingDB("dbname").dropDatabase(); 
 ```
 
+3.给集合指定分片策略
+
+```shell
+sh.shardCollection("dbname.collection", { parkey: 1 } )
+sh.shardCollection("dbname.collection", { parkey: "hashed" } )
+# 1：表示RANGE分片
+# hashed：表示哈希分片
+# 如果是空集合，命令会自动创建分片键索引；如果是非空集合，需要提前创建对应分片键索引，可以是联合索引的前缀
+```
+
+> 更多选项根据版本参考：https://www.mongodb.com/docs/v4.2/reference/command/shardCollection/#dbcmd.shardCollection
+
 
 
 > 用户权限相关:mongodb,每个用户和角色都在各自数据库范围下
