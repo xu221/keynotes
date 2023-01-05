@@ -6,7 +6,7 @@
 
 + Information_schema : for inspection of metadata
 
-+ 默认开启
++ 默认开启，默认监控项并不会影响多少性能，至于性能还是针对SQL和表设计比较适合。
 
 + 检查服务器是否支持performance_schema引擎
 
