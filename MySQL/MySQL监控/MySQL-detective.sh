@@ -1,4 +1,5 @@
 #!bin/bash
+#该脚本可以理解为检查MySQL配置以确保设置安全或者配置统一
 USER='root'
 PORT=3306
 HOST=127.0.0.1
