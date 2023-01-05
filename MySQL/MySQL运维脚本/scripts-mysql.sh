@@ -52,4 +52,5 @@ cat createdb.sql | tr "\r\n" " " | sed 's/;/;\n/g' | sed 's/CREATE/\nCREATE/g' |
 # <mysqldump开启RR事务导出数据>
 mysqldump -u'' -p'' -h'xx' --set-gtid-purged=OFF --single-transaction --no-create-info --hex-blob --complete-insert db_00 > db.sql
 mysqldump -u'' -p'' -h'xx' --set-gtid-purged=OFF --single-transaction --skip-add-drop-table --hex-blob --complete-insert db_00 > db.sql
+mysqldump -u'' -p'' -h'xx' --set-gtid-purged=OFF --single-transaction --skip-add-drop-table --hex-blob --complete-insert db_00 tablename --where='id="775"' > filter_by_id.sql
 # </>
