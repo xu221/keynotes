@@ -106,9 +106,8 @@
 4.如何使用utf8mb4:
   如果用的是java服务器，升级或确保你的mysql connector版本不低于5.1.13，否则不支持utf8mb4；
   当版本不高于5.1.46时，characterEncoding=UTF-8对应的是MySQLutf8mb3，所以会造成特殊字符无法插入问题。
-      解决1：设置character_set_server=utf8mb4，并缺省characterEncoding参数。
+      解决1：设置character_set_server=utf8mb4，并缺省characterEncoding参数，当版本高于5.1.46时，characterEncoding=UTF-8对应的是MySQLutf8mb4，所以可以使用该参数。
       解决2：连接设置初始化语句：SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
-  当版本高于5.1.46时，characterEncoding=UTF-8对应的是MySQLutf8mb4，所以可以直接使用该参数。
 ```
 
 2. 举一个jdbc转码时导致乱码的例子：
