@@ -121,6 +121,29 @@ xtrabackup --backup --incremental-lsn
 
 ---
 
+> **解压备份**
+
+1.解压xbsteam
+
+```shell
+xbstream -x < back.xtream -C /放置指定目录
+```
+
+2.解压qp文件
+
+xtrabackup2.1.4之前需要用如下命令解压qp文件
+```shell
+for bf in `find . -iname "*\.qp"`; do qpress -d $bf $(dirname $bf) && rm $bf; done
+```
+
+xtrabackup2.1.4之后
+```shell
+xtrabackup --decompress --target-dir='全备存储目录'
+```
+
+---
+
+
 > **应用redo日志**
 
 1.全备应用
