@@ -118,3 +118,22 @@ nohup daphne -e ssl:9000:privateKey=./server.key:certKey=./server.crt webpl.asgi
 ```
 
 3.客户端浏览器导入server.crt到受信任的根目录
+
+> 虚拟环境迁移
+
+1.拷贝所有venv目录下的文件传到对应服务器
+
+2.修改active中的VIRTUAL_ENV变量为目标服务器的目录
+```
+VIRTUAL_ENV="/home/new/webpl_pyvenv"
+export VIRTUAL_ENV
+```
+
+3.重新设置webpl_pyvenv/bin目录下的python软链接
+```
+rm python
+rm python3
+ln -s 源python3 ./
+ln -s python3 python
+```
+
