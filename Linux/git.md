@@ -48,3 +48,9 @@ git push origin master
 git pull origin master
 # 验证即可
 ```
+
+6.版本回退
+```
+# 回退到上一个版本
+git reset --hard HEAD^
+```
