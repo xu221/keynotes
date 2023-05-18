@@ -14,6 +14,18 @@ git config --global user.name "x21"
 git remote add origin /path/to/develop.git
 ```
 
+3.创建.gitignore，避免污染仓库
+```
+vim .gitignore
+*.log
+*.pyc
+*.config
+settings
+# 等等
+git add .gitignore
+```
+
+
 3.推送本地代码到中央
 ```
 git add code_project
@@ -25,7 +37,7 @@ git push origin master
 4.如何在新服务器拉取代码
 > SSH协议，先配置好配置x21用户免密
 ```
-git clone xzl@172.26.18.164:develop.git
+git clone xzl@x.x.x.x:develop.git
 cd develop
 ls -la
 drwxrwxr-x  4 dba dba 4096 May 15 15:44 .
