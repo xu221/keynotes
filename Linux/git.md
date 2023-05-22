@@ -66,3 +66,9 @@ git pull origin master
 # 回退到上一个版本
 git reset --hard HEAD^
 ```
+
+7.清除缓存
+```
+git rm -r --cached .
+# 缓存会影响.gitignore的生效，有些时候需要删除以重推代码到中央仓库
+```
