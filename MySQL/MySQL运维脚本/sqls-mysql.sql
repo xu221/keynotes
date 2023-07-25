@@ -26,3 +26,6 @@ SELECT TABLE_NAME FROM INFORMATION_SCHEMA.`TABLES` WHERE TABLE_SCHEMA='tb_00' AN
 
 -- 查询数据表的字段(排序): 查询INFORMATION_SCHEMA中的各个内存表，最好都带上TABLE_SCHEMA、TABLE_NAME以增强查询效率。
 SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type FROM INFORMATION_SCHEMA.`COLUMNS` WHERE TABLE_SCHEMA='dbname' AND TABLE_NAME='tbname' ORDER BY COLUMN_NAME;
+
+-- 查询自增字段当前值并生成跳段语句
+SELECT CONCAT('alter table ', table_schema, '.', table_name, ' auto_increment=', AUTO_INCREMENT+3000, ';') FROM information_schema.tables WHERE table_schema LIKE "db_%" AND AUTO_INCREMENT IS NOT NULL ;
