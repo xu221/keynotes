@@ -22,6 +22,8 @@ Trigger based migration, bound to server: 触发器和源操作还是在同一�
 
 ```
 所以，在各版本不支持ONLINE DDL的场景下，使用pt-osc或者gh-ost，其他场景选择原生ONLINE DDL(INPLACE)似乎是合适的？
+特殊场景一：当数据库存在主从拓扑时，请注意原生ONLINE DDL为一个整体，故而从库会存在一个DDL执行时间的延迟，如果是支持并行复制，那对其他表的延迟并不明显；否则整个从实例将会受到影响。
+特殊场景二：当数据库负载较高，cpu或者IO接近瓶颈时，开源工具能够设置chunksize大小，可以避免负载打满，而原生ONLINE DDL可能会让实例业务运行缓慢。
 ```
 ![image-1](https://github.com/xu221/keynotes/blob/pictures/MySQL/ONLINEDDL.png)
 
