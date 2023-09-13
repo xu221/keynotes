@@ -568,6 +568,16 @@ db.oplog.rs.find({ "ts" : { "$lt" : Timestamp(now_time, 1), "$gt" : Timestamp(no
 db.realtimeBuildMessage.find().sort({_id:-1}).limit(1)
 ```
 
+4.更新集合中的所有文档
+
+```shell
+db.collectionxxx.find({}).forEach(
+    function(item){                 
+        db.collectionxxx.update({"_id":item._id},{"$set":{"userName":item.username}}) 
+    }
+)
+```
+
 > 分片集群相关:mongos登录
 
 1.创建开启分片的数据库
