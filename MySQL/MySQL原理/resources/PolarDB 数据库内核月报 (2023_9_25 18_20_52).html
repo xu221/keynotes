@@ -1,0 +1,923 @@
+<!DOCTYPE html> <html style><!--
+ Page saved with SingleFile 
+ url: http://mysql.taobao.org/monthly/2021/03/06/ 
+ saved date: Mon Sep 25 2023 18:20:52 GMT+0800 (中国标准时间)
+--><meta charset=utf-8>
+<meta http-equiv=X-UA-Compatible content="IE=edge">
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta name=description content="数据库内核月报, 来着阿里云 PolarDB 数据库内核团队。">
+<style>html{color:#333;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;text-rendering:optimizelegibility;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:grayscale}ul,li,h1,h2,h3,code,p,td,footer,header,nav{margin:0;padding:0}footer,header,nav{display:block}body{font:400 1em/1.8 Avenir,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans-serif}img{-ms-interpolation-mode:bicubic}code{font-style:normal;font-weight:400}a:hover{text-decoration:underline}.typo a{border-bottom:1px solid #1abc9c}.typo a:hover{border-bottom-color:#555;color:#555;text-decoration:none}pre,code{font-family:Courier,"Courier New",monospace}pre{display:block;-webkit-overflow-scrolling:touch}b{color:#000}.typo p,.typo pre,.typo ul,.typo ol,.typo table{margin-bottom:1.8em}h1,h2,h3{font-family:"Helvetica Neue","Microsoft Yahei","Hiragino Sans GB","Microsoft Sans Serif","WenQuanYi Micro Hei",sans-serif;color:#000}.typo h2,.typo h3{margin-bottom:0.4em;line-height:1.5}.typo h2{font-size:1.8em}.typo h3{font-size:1.6em}.typo ul{margin-left:1.3em;list-style:disc}.typo ol{list-style:decimal;margin-left:1.9em}.typo table td{border:1px solid #ddd;padding:0.5em 1em;color:#666}::selection{background:#08c;color:#fff}/*!
+Animate.css - http://daneden.me/animate
+Licensed under the MIT license - http://opensource.org/licenses/MIT
+
+Copyright (c) 2015 Daniel Eden
+*/.animated{-webkit-animation-duration:1s;animation-duration:1s;-webkit-animation-fill-mode:both;animation-fill-mode:both}@-webkit-keyframes bounce{0%,20%,53%,80%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}40%,43%{-webkit-transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);-webkit-transform:translate3d(0,-30px,0);transform:translate3d(0,-30px,0)}70%{-webkit-transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);-webkit-transform:translate3d(0,-15px,0);transform:translate3d(0,-15px,0)}90%{-webkit-transform:translate3d(0,-4px,0);transform:translate3d(0,-4px,0)}}@keyframes bounce{0%,20%,53%,80%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}40%,43%{-webkit-transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);-webkit-transform:translate3d(0,-30px,0);transform:translate3d(0,-30px,0)}70%{-webkit-transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);transition-timing-function:cubic-bezier(0.755,0.050,0.855,0.060);-webkit-transform:translate3d(0,-15px,0);transform:translate3d(0,-15px,0)}90%{-webkit-transform:translate3d(0,-4px,0);transform:translate3d(0,-4px,0)}}@-webkit-keyframes flash{0%,50%,100%{opacity:1}25%,75%{opacity:0}}@keyframes flash{0%,50%,100%{opacity:1}25%,75%{opacity:0}}@-webkit-keyframes pulse{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}50%{-webkit-transform:scale3d(1.05,1.05,1.05);transform:scale3d(1.05,1.05,1.05)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@keyframes pulse{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}50%{-webkit-transform:scale3d(1.05,1.05,1.05);transform:scale3d(1.05,1.05,1.05)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@-webkit-keyframes rubberBand{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}30%{-webkit-transform:scale3d(1.25,0.75,1);transform:scale3d(1.25,0.75,1)}40%{-webkit-transform:scale3d(0.75,1.25,1);transform:scale3d(0.75,1.25,1)}50%{-webkit-transform:scale3d(1.15,0.85,1);transform:scale3d(1.15,0.85,1)}65%{-webkit-transform:scale3d(.95,1.05,1);transform:scale3d(.95,1.05,1)}75%{-webkit-transform:scale3d(1.05,.95,1);transform:scale3d(1.05,.95,1)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@keyframes rubberBand{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}30%{-webkit-transform:scale3d(1.25,0.75,1);transform:scale3d(1.25,0.75,1)}40%{-webkit-transform:scale3d(0.75,1.25,1);transform:scale3d(0.75,1.25,1)}50%{-webkit-transform:scale3d(1.15,0.85,1);transform:scale3d(1.15,0.85,1)}65%{-webkit-transform:scale3d(.95,1.05,1);transform:scale3d(.95,1.05,1)}75%{-webkit-transform:scale3d(1.05,.95,1);transform:scale3d(1.05,.95,1)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@-webkit-keyframes shake{0%,100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}10%,30%,50%,70%,90%{-webkit-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}20%,40%,60%,80%{-webkit-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}}@keyframes shake{0%,100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}10%,30%,50%,70%,90%{-webkit-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}20%,40%,60%,80%{-webkit-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}}@-webkit-keyframes swing{20%{-webkit-transform:rotate3d(0,0,1,15deg);transform:rotate3d(0,0,1,15deg)}40%{-webkit-transform:rotate3d(0,0,1,-10deg);transform:rotate3d(0,0,1,-10deg)}60%{-webkit-transform:rotate3d(0,0,1,5deg);transform:rotate3d(0,0,1,5deg)}80%{-webkit-transform:rotate3d(0,0,1,-5deg);transform:rotate3d(0,0,1,-5deg)}100%{-webkit-transform:rotate3d(0,0,1,0deg);transform:rotate3d(0,0,1,0deg)}}@keyframes swing{20%{-webkit-transform:rotate3d(0,0,1,15deg);transform:rotate3d(0,0,1,15deg)}40%{-webkit-transform:rotate3d(0,0,1,-10deg);transform:rotate3d(0,0,1,-10deg)}60%{-webkit-transform:rotate3d(0,0,1,5deg);transform:rotate3d(0,0,1,5deg)}80%{-webkit-transform:rotate3d(0,0,1,-5deg);transform:rotate3d(0,0,1,-5deg)}100%{-webkit-transform:rotate3d(0,0,1,0deg);transform:rotate3d(0,0,1,0deg)}}@-webkit-keyframes tada{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}10%,20%{-webkit-transform:scale3d(.9,.9,.9) rotate3d(0,0,1,-3deg);transform:scale3d(.9,.9,.9) rotate3d(0,0,1,-3deg)}30%,50%,70%,90%{-webkit-transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,3deg);transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,3deg)}40%,60%,80%{-webkit-transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,-3deg);transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,-3deg)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@keyframes tada{0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}10%,20%{-webkit-transform:scale3d(.9,.9,.9) rotate3d(0,0,1,-3deg);transform:scale3d(.9,.9,.9) rotate3d(0,0,1,-3deg)}30%,50%,70%,90%{-webkit-transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,3deg);transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,3deg)}40%,60%,80%{-webkit-transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,-3deg);transform:scale3d(1.1,1.1,1.1) rotate3d(0,0,1,-3deg)}100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@-webkit-keyframes wobble{0%{-webkit-transform:none;transform:none}15%{-webkit-transform:translate3d(-25%,0,0) rotate3d(0,0,1,-5deg);transform:translate3d(-25%,0,0) rotate3d(0,0,1,-5deg)}30%{-webkit-transform:translate3d(20%,0,0) rotate3d(0,0,1,3deg);transform:translate3d(20%,0,0) rotate3d(0,0,1,3deg)}45%{-webkit-transform:translate3d(-15%,0,0) rotate3d(0,0,1,-3deg);transform:translate3d(-15%,0,0) rotate3d(0,0,1,-3deg)}60%{-webkit-transform:translate3d(10%,0,0) rotate3d(0,0,1,2deg);transform:translate3d(10%,0,0) rotate3d(0,0,1,2deg)}75%{-webkit-transform:translate3d(-5%,0,0) rotate3d(0,0,1,-1deg);transform:translate3d(-5%,0,0) rotate3d(0,0,1,-1deg)}100%{-webkit-transform:none;transform:none}}@keyframes wobble{0%{-webkit-transform:none;transform:none}15%{-webkit-transform:translate3d(-25%,0,0) rotate3d(0,0,1,-5deg);transform:translate3d(-25%,0,0) rotate3d(0,0,1,-5deg)}30%{-webkit-transform:translate3d(20%,0,0) rotate3d(0,0,1,3deg);transform:translate3d(20%,0,0) rotate3d(0,0,1,3deg)}45%{-webkit-transform:translate3d(-15%,0,0) rotate3d(0,0,1,-3deg);transform:translate3d(-15%,0,0) rotate3d(0,0,1,-3deg)}60%{-webkit-transform:translate3d(10%,0,0) rotate3d(0,0,1,2deg);transform:translate3d(10%,0,0) rotate3d(0,0,1,2deg)}75%{-webkit-transform:translate3d(-5%,0,0) rotate3d(0,0,1,-1deg);transform:translate3d(-5%,0,0) rotate3d(0,0,1,-1deg)}100%{-webkit-transform:none;transform:none}}@-webkit-keyframes bounceIn{0%,20%,40%,60%,80%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}20%{-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}40%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}60%{opacity:1;-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}80%{-webkit-transform:scale3d(.97,.97,.97);transform:scale3d(.97,.97,.97)}100%{opacity:1;-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@keyframes bounceIn{0%,20%,40%,60%,80%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}20%{-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}40%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}60%{opacity:1;-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}80%{-webkit-transform:scale3d(.97,.97,.97);transform:scale3d(.97,.97,.97)}100%{opacity:1;-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}}@-webkit-keyframes bounceInDown{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(0,-3000px,0);transform:translate3d(0,-3000px,0)}60%{opacity:1;-webkit-transform:translate3d(0,25px,0);transform:translate3d(0,25px,0)}75%{-webkit-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}90%{-webkit-transform:translate3d(0,5px,0);transform:translate3d(0,5px,0)}100%{-webkit-transform:none;transform:none}}@keyframes bounceInDown{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(0,-3000px,0);transform:translate3d(0,-3000px,0)}60%{opacity:1;-webkit-transform:translate3d(0,25px,0);transform:translate3d(0,25px,0)}75%{-webkit-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}90%{-webkit-transform:translate3d(0,5px,0);transform:translate3d(0,5px,0)}100%{-webkit-transform:none;transform:none}}@-webkit-keyframes bounceInLeft{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(-3000px,0,0);transform:translate3d(-3000px,0,0)}60%{opacity:1;-webkit-transform:translate3d(25px,0,0);transform:translate3d(25px,0,0)}75%{-webkit-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}90%{-webkit-transform:translate3d(5px,0,0);transform:translate3d(5px,0,0)}100%{-webkit-transform:none;transform:none}}@keyframes bounceInLeft{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(-3000px,0,0);transform:translate3d(-3000px,0,0)}60%{opacity:1;-webkit-transform:translate3d(25px,0,0);transform:translate3d(25px,0,0)}75%{-webkit-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}90%{-webkit-transform:translate3d(5px,0,0);transform:translate3d(5px,0,0)}100%{-webkit-transform:none;transform:none}}@-webkit-keyframes bounceInRight{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(3000px,0,0);transform:translate3d(3000px,0,0)}60%{opacity:1;-webkit-transform:translate3d(-25px,0,0);transform:translate3d(-25px,0,0)}75%{-webkit-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}90%{-webkit-transform:translate3d(-5px,0,0);transform:translate3d(-5px,0,0)}100%{-webkit-transform:none;transform:none}}@keyframes bounceInRight{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(3000px,0,0);transform:translate3d(3000px,0,0)}60%{opacity:1;-webkit-transform:translate3d(-25px,0,0);transform:translate3d(-25px,0,0)}75%{-webkit-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}90%{-webkit-transform:translate3d(-5px,0,0);transform:translate3d(-5px,0,0)}100%{-webkit-transform:none;transform:none}}@-webkit-keyframes bounceInUp{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(0,3000px,0);transform:translate3d(0,3000px,0)}60%{opacity:1;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}75%{-webkit-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}90%{-webkit-transform:translate3d(0,-5px,0);transform:translate3d(0,-5px,0)}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes bounceInUp{0%,60%,75%,90%,100%{-webkit-transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000);transition-timing-function:cubic-bezier(0.215,0.610,0.355,1.000)}0%{opacity:0;-webkit-transform:translate3d(0,3000px,0);transform:translate3d(0,3000px,0)}60%{opacity:1;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}75%{-webkit-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}90%{-webkit-transform:translate3d(0,-5px,0);transform:translate3d(0,-5px,0)}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@-webkit-keyframes bounceOut{20%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}50%,55%{opacity:1;-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}100%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}}@keyframes bounceOut{20%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}50%,55%{opacity:1;-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}100%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}}@-webkit-keyframes bounceOutDown{20%{-webkit-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}40%,45%{opacity:1;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}100%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}}@keyframes bounceOutDown{20%{-webkit-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}40%,45%{opacity:1;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}100%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}}@-webkit-keyframes bounceOutLeft{20%{opacity:1;-webkit-transform:translate3d(20px,0,0);transform:translate3d(20px,0,0)}100%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}}@keyframes bounceOutLeft{20%{opacity:1;-webkit-transform:translate3d(20px,0,0);transform:translate3d(20px,0,0)}100%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}}@-webkit-keyframes bounceOutRight{20%{opacity:1;-webkit-transform:translate3d(-20px,0,0);transform:translate3d(-20px,0,0)}100%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}}@keyframes bounceOutRight{20%{opacity:1;-webkit-transform:translate3d(-20px,0,0);transform:translate3d(-20px,0,0)}100%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}}@-webkit-keyframes bounceOutUp{20%{-webkit-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}40%,45%{opacity:1;-webkit-transform:translate3d(0,20px,0);transform:translate3d(0,20px,0)}100%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}}@keyframes bounceOutUp{20%{-webkit-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}40%,45%{opacity:1;-webkit-transform:translate3d(0,20px,0);transform:translate3d(0,20px,0)}100%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}}@-webkit-keyframes fadeIn{0%{opacity:0}100%{opacity:1}}@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}@-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInDownBig{0%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInDownBig{0%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInLeft{0%{opacity:0;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInLeft{0%{opacity:0;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInLeftBig{0%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInLeftBig{0%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInRight{0%{opacity:0;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInRight{0%{opacity:0;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInRightBig{0%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInRightBig{0%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInUp{0%{opacity:0;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInUp{0%{opacity:0;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeInUpBig{0%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInUpBig{0%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes fadeOut{0%{opacity:1}100%{opacity:0}}@keyframes fadeOut{0%{opacity:1}100%{opacity:0}}@-webkit-keyframes fadeOutDown{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}}@keyframes fadeOutDown{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}}@-webkit-keyframes fadeOutDownBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}}@keyframes fadeOutDownBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,2000px,0);transform:translate3d(0,2000px,0)}}@-webkit-keyframes fadeOutLeft{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}}@keyframes fadeOutLeft{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}}@-webkit-keyframes fadeOutLeftBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}}@keyframes fadeOutLeftBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(-2000px,0,0);transform:translate3d(-2000px,0,0)}}@-webkit-keyframes fadeOutRight{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}}@keyframes fadeOutRight{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}}@-webkit-keyframes fadeOutRightBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}}@keyframes fadeOutRightBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(2000px,0,0);transform:translate3d(2000px,0,0)}}@-webkit-keyframes fadeOutUp{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}}@keyframes fadeOutUp{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}}@-webkit-keyframes fadeOutUpBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}}@keyframes fadeOutUpBig{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(0,-2000px,0);transform:translate3d(0,-2000px,0)}}@-webkit-keyframes flip{0%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-360deg);transform:perspective(400px) rotate3d(0,1,0,-360deg);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}40%{-webkit-transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-190deg);transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-190deg);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}50%{-webkit-transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-170deg);transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-170deg);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}80%{-webkit-transform:perspective(400px) scale3d(.95,.95,.95);transform:perspective(400px) scale3d(.95,.95,.95);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}100%{-webkit-transform:perspective(400px);transform:perspective(400px);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}}@keyframes flip{0%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-360deg);transform:perspective(400px) rotate3d(0,1,0,-360deg);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}40%{-webkit-transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-190deg);transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-190deg);-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}50%{-webkit-transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-170deg);transform:perspective(400px) translate3d(0,0,150px) rotate3d(0,1,0,-170deg);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}80%{-webkit-transform:perspective(400px) scale3d(.95,.95,.95);transform:perspective(400px) scale3d(.95,.95,.95);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}100%{-webkit-transform:perspective(400px);transform:perspective(400px);-webkit-animation-timing-function:ease-in;animation-timing-function:ease-in}}@-webkit-keyframes flipInX{0%{-webkit-transform:perspective(400px) rotate3d(1,0,0,90deg);transform:perspective(400px) rotate3d(1,0,0,90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in;opacity:0}40%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-20deg);transform:perspective(400px) rotate3d(1,0,0,-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}60%{-webkit-transform:perspective(400px) rotate3d(1,0,0,10deg);transform:perspective(400px) rotate3d(1,0,0,10deg);opacity:1}80%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-5deg);transform:perspective(400px) rotate3d(1,0,0,-5deg)}100%{-webkit-transform:perspective(400px);transform:perspective(400px)}}@keyframes flipInX{0%{-webkit-transform:perspective(400px) rotate3d(1,0,0,90deg);transform:perspective(400px) rotate3d(1,0,0,90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in;opacity:0}40%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-20deg);transform:perspective(400px) rotate3d(1,0,0,-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}60%{-webkit-transform:perspective(400px) rotate3d(1,0,0,10deg);transform:perspective(400px) rotate3d(1,0,0,10deg);opacity:1}80%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-5deg);transform:perspective(400px) rotate3d(1,0,0,-5deg)}100%{-webkit-transform:perspective(400px);transform:perspective(400px)}}@-webkit-keyframes flipInY{0%{-webkit-transform:perspective(400px) rotate3d(0,1,0,90deg);transform:perspective(400px) rotate3d(0,1,0,90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in;opacity:0}40%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-20deg);transform:perspective(400px) rotate3d(0,1,0,-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}60%{-webkit-transform:perspective(400px) rotate3d(0,1,0,10deg);transform:perspective(400px) rotate3d(0,1,0,10deg);opacity:1}80%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-5deg);transform:perspective(400px) rotate3d(0,1,0,-5deg)}100%{-webkit-transform:perspective(400px);transform:perspective(400px)}}@keyframes flipInY{0%{-webkit-transform:perspective(400px) rotate3d(0,1,0,90deg);transform:perspective(400px) rotate3d(0,1,0,90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in;opacity:0}40%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-20deg);transform:perspective(400px) rotate3d(0,1,0,-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}60%{-webkit-transform:perspective(400px) rotate3d(0,1,0,10deg);transform:perspective(400px) rotate3d(0,1,0,10deg);opacity:1}80%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-5deg);transform:perspective(400px) rotate3d(0,1,0,-5deg)}100%{-webkit-transform:perspective(400px);transform:perspective(400px)}}@-webkit-keyframes flipOutX{0%{-webkit-transform:perspective(400px);transform:perspective(400px)}30%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-20deg);transform:perspective(400px) rotate3d(1,0,0,-20deg);opacity:1}100%{-webkit-transform:perspective(400px) rotate3d(1,0,0,90deg);transform:perspective(400px) rotate3d(1,0,0,90deg);opacity:0}}@keyframes flipOutX{0%{-webkit-transform:perspective(400px);transform:perspective(400px)}30%{-webkit-transform:perspective(400px) rotate3d(1,0,0,-20deg);transform:perspective(400px) rotate3d(1,0,0,-20deg);opacity:1}100%{-webkit-transform:perspective(400px) rotate3d(1,0,0,90deg);transform:perspective(400px) rotate3d(1,0,0,90deg);opacity:0}}@-webkit-keyframes flipOutY{0%{-webkit-transform:perspective(400px);transform:perspective(400px)}30%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-15deg);transform:perspective(400px) rotate3d(0,1,0,-15deg);opacity:1}100%{-webkit-transform:perspective(400px) rotate3d(0,1,0,90deg);transform:perspective(400px) rotate3d(0,1,0,90deg);opacity:0}}@keyframes flipOutY{0%{-webkit-transform:perspective(400px);transform:perspective(400px)}30%{-webkit-transform:perspective(400px) rotate3d(0,1,0,-15deg);transform:perspective(400px) rotate3d(0,1,0,-15deg);opacity:1}100%{-webkit-transform:perspective(400px) rotate3d(0,1,0,90deg);transform:perspective(400px) rotate3d(0,1,0,90deg);opacity:0}}@-webkit-keyframes lightSpeedIn{0%{-webkit-transform:translate3d(100%,0,0) skewX(-30deg);transform:translate3d(100%,0,0) skewX(-30deg);opacity:0}60%{-webkit-transform:skewX(20deg);transform:skewX(20deg);opacity:1}80%{-webkit-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}100%{-webkit-transform:none;transform:none;opacity:1}}@keyframes lightSpeedIn{0%{-webkit-transform:translate3d(100%,0,0) skewX(-30deg);transform:translate3d(100%,0,0) skewX(-30deg);opacity:0}60%{-webkit-transform:skewX(20deg);transform:skewX(20deg);opacity:1}80%{-webkit-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}100%{-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes lightSpeedOut{0%{opacity:1}100%{-webkit-transform:translate3d(100%,0,0) skewX(30deg);transform:translate3d(100%,0,0) skewX(30deg);opacity:0}}@keyframes lightSpeedOut{0%{opacity:1}100%{-webkit-transform:translate3d(100%,0,0) skewX(30deg);transform:translate3d(100%,0,0) skewX(30deg);opacity:0}}@-webkit-keyframes rotateIn{0%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:rotate3d(0,0,1,-200deg);transform:rotate3d(0,0,1,-200deg);opacity:0}100%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:none;transform:none;opacity:1}}@keyframes rotateIn{0%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:rotate3d(0,0,1,-200deg);transform:rotate3d(0,0,1,-200deg);opacity:0}100%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes rotateInDownLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:none;transform:none;opacity:1}}@keyframes rotateInDownLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes rotateInDownRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:none;transform:none;opacity:1}}@keyframes rotateInDownRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes rotateInUpLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:none;transform:none;opacity:1}}@keyframes rotateInUpLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes rotateInUpRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,-90deg);transform:rotate3d(0,0,1,-90deg);opacity:0}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:none;transform:none;opacity:1}}@keyframes rotateInUpRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,-90deg);transform:rotate3d(0,0,1,-90deg);opacity:0}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:none;transform:none;opacity:1}}@-webkit-keyframes rotateOut{0%{-webkit-transform-origin:center;transform-origin:center;opacity:1}100%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:rotate3d(0,0,1,200deg);transform:rotate3d(0,0,1,200deg);opacity:0}}@keyframes rotateOut{0%{-webkit-transform-origin:center;transform-origin:center;opacity:1}100%{-webkit-transform-origin:center;transform-origin:center;-webkit-transform:rotate3d(0,0,1,200deg);transform:rotate3d(0,0,1,200deg);opacity:0}}@-webkit-keyframes rotateOutDownLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;opacity:1}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}}@keyframes rotateOutDownLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;opacity:1}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,45deg);transform:rotate3d(0,0,1,45deg);opacity:0}}@-webkit-keyframes rotateOutDownRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;opacity:1}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}}@keyframes rotateOutDownRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;opacity:1}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}}@-webkit-keyframes rotateOutUpLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;opacity:1}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}}@keyframes rotateOutUpLeft{0%{-webkit-transform-origin:left bottom;transform-origin:left bottom;opacity:1}100%{-webkit-transform-origin:left bottom;transform-origin:left bottom;-webkit-transform:rotate3d(0,0,1,-45deg);transform:rotate3d(0,0,1,-45deg);opacity:0}}@-webkit-keyframes rotateOutUpRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;opacity:1}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,90deg);transform:rotate3d(0,0,1,90deg);opacity:0}}@keyframes rotateOutUpRight{0%{-webkit-transform-origin:right bottom;transform-origin:right bottom;opacity:1}100%{-webkit-transform-origin:right bottom;transform-origin:right bottom;-webkit-transform:rotate3d(0,0,1,90deg);transform:rotate3d(0,0,1,90deg);opacity:0}}@-webkit-keyframes hinge{0%{-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out}20%,60%{-webkit-transform:rotate3d(0,0,1,80deg);transform:rotate3d(0,0,1,80deg);-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out}40%,80%{-webkit-transform:rotate3d(0,0,1,60deg);transform:rotate3d(0,0,1,60deg);-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out;opacity:1}100%{-webkit-transform:translate3d(0,700px,0);transform:translate3d(0,700px,0);opacity:0}}@keyframes hinge{0%{-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out}20%,60%{-webkit-transform:rotate3d(0,0,1,80deg);transform:rotate3d(0,0,1,80deg);-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out}40%,80%{-webkit-transform:rotate3d(0,0,1,60deg);transform:rotate3d(0,0,1,60deg);-webkit-transform-origin:top left;transform-origin:top left;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out;opacity:1}100%{-webkit-transform:translate3d(0,700px,0);transform:translate3d(0,700px,0);opacity:0}}@-webkit-keyframes rollIn{0%{opacity:0;-webkit-transform:translate3d(-100%,0,0) rotate3d(0,0,1,-120deg);transform:translate3d(-100%,0,0) rotate3d(0,0,1,-120deg)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes rollIn{0%{opacity:0;-webkit-transform:translate3d(-100%,0,0) rotate3d(0,0,1,-120deg);transform:translate3d(-100%,0,0) rotate3d(0,0,1,-120deg)}100%{opacity:1;-webkit-transform:none;transform:none}}@-webkit-keyframes rollOut{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(100%,0,0) rotate3d(0,0,1,120deg);transform:translate3d(100%,0,0) rotate3d(0,0,1,120deg)}}@keyframes rollOut{0%{opacity:1}100%{opacity:0;-webkit-transform:translate3d(100%,0,0) rotate3d(0,0,1,120deg);transform:translate3d(100%,0,0) rotate3d(0,0,1,120deg)}}@-webkit-keyframes zoomIn{0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}50%{opacity:1}}@keyframes zoomIn{0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}50%{opacity:1}}.zoomIn{-webkit-animation-name:zoomIn;animation-name:zoomIn}@-webkit-keyframes zoomInDown{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,-1000px,0);transform:scale3d(.1,.1,.1) translate3d(0,-1000px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,60px,0);transform:scale3d(.475,.475,.475) translate3d(0,60px,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomInDown{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,-1000px,0);transform:scale3d(.1,.1,.1) translate3d(0,-1000px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,60px,0);transform:scale3d(.475,.475,.475) translate3d(0,60px,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes zoomInLeft{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(-1000px,0,0);transform:scale3d(.1,.1,.1) translate3d(-1000px,0,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(10px,0,0);transform:scale3d(.475,.475,.475) translate3d(10px,0,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomInLeft{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(-1000px,0,0);transform:scale3d(.1,.1,.1) translate3d(-1000px,0,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(10px,0,0);transform:scale3d(.475,.475,.475) translate3d(10px,0,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes zoomInRight{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(1000px,0,0);transform:scale3d(.1,.1,.1) translate3d(1000px,0,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(-10px,0,0);transform:scale3d(.475,.475,.475) translate3d(-10px,0,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomInRight{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(1000px,0,0);transform:scale3d(.1,.1,.1) translate3d(1000px,0,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(-10px,0,0);transform:scale3d(.475,.475,.475) translate3d(-10px,0,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes zoomInUp{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,1000px,0);transform:scale3d(.1,.1,.1) translate3d(0,1000px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomInUp{0%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,1000px,0);transform:scale3d(.1,.1,.1) translate3d(0,1000px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}60%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes zoomOut{0%{opacity:1}50%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}100%{opacity:0}}@keyframes zoomOut{0%{opacity:1}50%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}100%{opacity:0}}@-webkit-keyframes zoomOutDown{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}100%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,2000px,0);transform:scale3d(.1,.1,.1) translate3d(0,2000px,0);-webkit-transform-origin:center bottom;transform-origin:center bottom;-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomOutDown{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);transform:scale3d(.475,.475,.475) translate3d(0,-60px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}100%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,2000px,0);transform:scale3d(.1,.1,.1) translate3d(0,2000px,0);-webkit-transform-origin:center bottom;transform-origin:center bottom;-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes zoomOutLeft{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(42px,0,0);transform:scale3d(.475,.475,.475) translate3d(42px,0,0)}100%{opacity:0;-webkit-transform:scale(.1) translate3d(-2000px,0,0);transform:scale(.1) translate3d(-2000px,0,0);-webkit-transform-origin:left center;transform-origin:left center}}@keyframes zoomOutLeft{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(42px,0,0);transform:scale3d(.475,.475,.475) translate3d(42px,0,0)}100%{opacity:0;-webkit-transform:scale(.1) translate3d(-2000px,0,0);transform:scale(.1) translate3d(-2000px,0,0);-webkit-transform-origin:left center;transform-origin:left center}}@-webkit-keyframes zoomOutRight{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(-42px,0,0);transform:scale3d(.475,.475,.475) translate3d(-42px,0,0)}100%{opacity:0;-webkit-transform:scale(.1) translate3d(2000px,0,0);transform:scale(.1) translate3d(2000px,0,0);-webkit-transform-origin:right center;transform-origin:right center}}@keyframes zoomOutRight{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(-42px,0,0);transform:scale3d(.475,.475,.475) translate3d(-42px,0,0)}100%{opacity:0;-webkit-transform:scale(.1) translate3d(2000px,0,0);transform:scale(.1) translate3d(2000px,0,0);-webkit-transform-origin:right center;transform-origin:right center}}@-webkit-keyframes zoomOutUp{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,60px,0);transform:scale3d(.475,.475,.475) translate3d(0,60px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}100%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,-2000px,0);transform:scale3d(.1,.1,.1) translate3d(0,-2000px,0);-webkit-transform-origin:center bottom;transform-origin:center bottom;-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@keyframes zoomOutUp{40%{opacity:1;-webkit-transform:scale3d(.475,.475,.475) translate3d(0,60px,0);transform:scale3d(.475,.475,.475) translate3d(0,60px,0);-webkit-animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190);animation-timing-function:cubic-bezier(0.550,0.055,0.675,0.190)}100%{opacity:0;-webkit-transform:scale3d(.1,.1,.1) translate3d(0,-2000px,0);transform:scale3d(.1,.1,.1) translate3d(0,-2000px,0);-webkit-transform-origin:center bottom;transform-origin:center bottom;-webkit-animation-timing-function:cubic-bezier(0.175,0.885,0.320,1);animation-timing-function:cubic-bezier(0.175,0.885,0.320,1)}}@-webkit-keyframes slideInDown{0%{-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes slideInDown{0%{-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@-webkit-keyframes slideInLeft{0%{-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes slideInLeft{0%{-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@-webkit-keyframes slideInRight{0%{-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes slideInRight{0%{-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@-webkit-keyframes slideInUp{0%{-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes slideInUp{0%{-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0);visibility:visible}100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@-webkit-keyframes slideOutDown{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}}@keyframes slideOutDown{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}}@-webkit-keyframes slideOutLeft{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}}@keyframes slideOutLeft{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(-100%,0,0);transform:translate3d(-100%,0,0)}}@-webkit-keyframes slideOutRight{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}}@keyframes slideOutRight{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(100%,0,0);transform:translate3d(100%,0,0)}}@-webkit-keyframes slideOutUp{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}}@keyframes slideOutUp{0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}100%{visibility:hidden;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}}h1,h2,h3,b{font-weight:600}html,body{height:100%}body{background:#f9f9f9;color:#303030;font-size:15px;line-height:2em;padding:0;margin:0}body,body *{-webkit-font-smoothing:antialiased}img{border:none}#go-back-home{margin:40px 0 0}#go-back-home:hover{background-image:none}.muted{color:#8f8f8f}ol,ol li{padding:0;margin:0}header{text-align:center}footer{width:100%;max-width:940px;margin:auto;padding-bottom:30px;text-align:center}footer *{color:#797979}#container{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;width:100%;max-width:940px;background:#fff;margin:40px auto 20px;border-radius:7px;border:1px solid #eee;position:relative}#container:before,#container:after{content:" ";display:table}#container:after{clear:both}#container .block{border-top:1px solid #efefef;border-bottom:1px solid #efefef;padding:30px 40px 24px;text-align:center}#container .block:first-child,#container .block+.block{border-top:0}#container .block:last-child{border-bottom:0}.content{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;position:relative;width:100%;border-width:0;border-style:solid;padding:30px 60px;margin:auto}a{text-decoration:none;color:#269;display:inline-block;vertical-align:baseline;zoom:1;-webkit-transition:color 0.3s;-moz-transition:color 0.3s;-ms-transition:color 0.3s;-o-transition:color 0.3s;transition:color 0.3s}a.main,a:hover,.as-link.main,.as-link:hover{color:#1d5884;background-image:url(data:,);background-repeat:repeat-x;background-position:left bottom}.highlight{margin:0;padding:0}pre{overflow-x:auto;width:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}code{border-radius:2px;vertical-align:baseline;zoom:1}img{max-width:100%}table{width:90%;max-width:90%;border-collapse:collapse;border-spacing:0;margin-right:auto;margin-left:auto;font-size:0.96em;box-sizing:border-box}td{text-align:left}td{vertical-align:top}tr:nth-child(even){background-color:#efefee}@media (max-width:480px){body{padding:0 10px}body #container .content{padding:15px}}.hljs{background:#f7f7f7!important;border:1px solid #ddd!important}.cd-top{display:inline-block;height:60px;width:60px;position:fixed;bottom:40px;right:10px;box-shadow:0 0 10px rgba(0,0,0,0.05);overflow:hidden;text-align:center;white-space:nowrap;background:#269;border-radius:30px;-webkit-transition:opacity .3s 0s,visibility 0s .3s;-moz-transition:opacity .3s 0s,visibility 0s .3s}.cd-top.cd-fade-out{-webkit-transition:opacity .3s 0s,visibility 0s 0s;-moz-transition:opacity .3s 0s,visibility 0s 0s;transition:opacity .3s 0s,visibility 0s 0s}.cd-top.cd-is-visible{visibility:visible}.cd-top.cd-fade-out{opacity:.5}@media only screen and (min-width:1024px){.cd-top{height:60px;width:60px;right:30px;bottom:30px}}#primary_nav_wrap{position:absolute;z-index:999}#primary_nav_wrap ul{list-style:none;position:relative;float:left;margin:0;padding:0}#primary_nav_wrap ul a{display:block;color:#333;text-decoration:none;font-weight:700;font-size:12px;line-height:32px;padding:0 15px;font-family:"HelveticaNeue","Helvetica Neue",Helvetica,Arial,sans-serif;text-align:left}#primary_nav_wrap ul li{position:relative;float:left;margin:0;padding:0}#primary_nav_wrap ul li:hover{background:#f6f6f6}</style>
+<link rel=canonical href=http://mysql.taobao.org//monthly/>
+<link rel=alternate type=application/rss+xml title="PolarDB 数据库内核月报" href=http://mysql.taobao.org//monthly/feed.xml>
+<style>.hljs-title{color:#8e908c}.hljs-number,.hljs-params{color:#f5871f}.hljs-string{color:#718c00}.hljs-function{color:#4271ae}.hljs-keyword{color:#8959a8}.hljs{display:block;overflow-x:auto;background:white;color:#4d4d4c;padding:0.5em;-webkit-text-size-adjust:none}*{text-shadow:transparent 0px 0px 0px,rgba(0,0,0,1) 0px 0px 0px!important}</style><title class=sf-hidden>
+ PolarDB 数据库内核月报
+ </title><style>.sf-hidden{display:none!important}</style><meta http-equiv=content-security-policy content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:;"><style>img[src="data:,"],source[src="data:,"]{display:none!important}</style></head>
+<!-- Google Analysis -->
+<body>
+ 
+ 
+<header>
+ <a id=go-back-home href=http://mysql.taobao.org/monthly/2021/03>
+ <h1>PolarDB 数据库内核月报 － 2021 / 03</h1>
+ </a>
+</header>
+<div id=container class="animated zoomIn">
+ <div class=block>
+ <nav id=primary_nav_wrap>
+ <ul>
+ <li>
+ <a href=#>当期文章</a>
+ <ul class="animated sf-hidden">
+ 
+ 
+ 
+ 
+ 
+ </ul> 
+ </li>
+ </ul>
+ </nav>
+ <h2> MySQL · 源码阅读 · 白话Online DDL </h2>
+ </div>
+ <div class="content typo">
+ <h2 id=发展历程>发展历程</h2>
+<p>MySQL Online DDL 功能从 5.6 版本开始正式引入，发展到现在的 8.0 版本，经历了多次的调整和完善。本文主要就 Online DDL 的发展过程，以及各版本的区别进行总结。其实早在 MySQL 5.5 版本中就加入了 INPLACE DDL 方式，但是因为实现的问题，依然会阻塞 INSERT、UPDATE、DELETE 操作，这也是 MySQL 早期版本长期被吐槽的原因之一。</p>
+<p>在 MySQL 5.6 中，官方开始支持更多的 ALTER TABLE 类型操作来避免数据拷贝，同时支持了在线上 DDL 的过程中不阻塞 DML 操作，真正意义上的实现了 Online DDL。然而并不是所有的 DDL 操作都支持在线操作，后面会附上 MySQL 官方文档对于 DDL 操作的总结。到了 MySQL 5.7，在 5.6 的基础上又增加了一些新的特性，比如：增加了重命名索引支持，支持了数值类型长度的增大和减小，支持了 VARCHAR 类型的在线增大等。但是基本的实现逻辑和限制条件相比 5.6 并没有大的变化。MySQL 8.0 对 DDL 的实现重新进行了设计，其中一个最大的改进是 DDL 操作支持了原子特性。另外，Online DDL 的 ALGORITHM 参数增加了一个新的选项：INSTANT，只需修改数据字典中的元数据，无需拷贝数据也无需重建表，同样也无需加排他 MDL 锁，原表数据也不受影响。整个 DDL 过程几乎是瞬间完成的，也不会阻塞 DML。</p>
+<p>关于 MySQL 8.0 原子 DDL 的介绍可以参考：http://mysql.taobao.org/monthly/2020/05/05/ 。</p>
+<h2 id=各版本支持>各版本支持</h2>
+<p>本文数据全部来自 MySQL 官方文档，此处进行一个集中的整理和总结：
+<a href=https://dev.mysql.com/doc/refman/5.6/en/innodb-online-ddl-operations.html target=_blank>https://dev.mysql.com/doc/refman/5.6/en/innodb-online-ddl-operations.html</a>
+<a href=https://dev.mysql.com/doc/refman/5.7/en/innodb-online-ddl-operations.html target=_blank>https://dev.mysql.com/doc/refman/5.7/en/innodb-online-ddl-operations.html</a>
+<a href=https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html target=_blank>https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html</a></p>
+<table>
+ <tbody><tr>
+ <td><b>操作</b></td>
+ <td><b>版本</b></td>
+ <td><b>INSTANT</b></td>
+ <td><b>INPLACE</b></td>
+ <td><b>重建表</b></td>
+ <td><b>并发 DML</b></td>
+ <td><b>仅修改元数据</b></td>
+ </tr>
+ <tr>
+ <td colspan=7><b>二级索引</b></td>
+ </tr>
+ <tr>
+ <td>创建二级索引</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>删除索引</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td>重命名索引</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ </tr>
+ <tr>
+ <td>增加全文索引</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td>No*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes*</td>
+ <td>No*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes*</td>
+ <td>No*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>增加空间索引</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ </tr>
+ <tr>
+ <td>修改索引类型</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td colspan=7><b>主键</b></td>
+ </tr>
+ <tr>
+ <td>增加主键</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>删除主键</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>重建主键</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td colspan=7><b>列操作</b></td>
+ </tr>
+ <tr>
+ <td>新增列</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes*</td>
+ <td>Yes</td>
+ <td>No*</td>
+ <td>Yes*</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes*</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes*</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>删除列</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>重命名列</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td>调整列顺序</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>修改列默认值</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td>修改列数据类型</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>扩展 VARCHAR 长度</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ </tr>
+ <tr>
+ <td>删除列默认值</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td>修改自增值</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No*</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No*</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>No*</td>
+ </tr>
+ <tr>
+ <td>修改列为空</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>修改列为非空</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>修改列 ENUM 值</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td colspan=7><b>表操作</b></td>
+ </tr>
+ <tr>
+ <td>修改 ROW_FORMAT</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>修改 KEY_BLOCK_SIZE</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>指定字符集</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>修改字符集</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes*</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td bgcolor=orange>No</td>
+ <td bgcolor=yellow>Yes</td>
+ <td bgcolor=red>No</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>OPTIMIZE 表</td>
+ <td>MySQL 8.0</td>
+ <td>No</td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes*</td>
+ <td bgcolor=yellow>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ </tr>
+ <tr>
+ <td>重命名表</td>
+ <td>MySQL 8.0</td>
+ <td bgcolor=green>Yes</td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.7</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+ <tr>
+ <td></td>
+ <td>MySQL 5.6</td>
+ <td></td>
+ <td>Yes</td>
+ <td>No</td>
+ <td>Yes</td>
+ <td>Yes</td>
+ </tr>
+</table>
+<p>结合上面的表格，对 MySQL 当前 DDL 的执行模式总结如下：</p>
+<p>INSTANT DDL 是 MySQL 8.0 引入的新功能，当前支持的范围较小，包括：</p>
+<ul>
+ <li>修改二级索引类型</li>
+ <li>新增列</li>
+ <li>修改列默认值</li>
+ <li>修改列 ENUM 值</li>
+ <li>重命名表</li>
+</ul>
+<p>在执行 DDL 操作时，MySQL 内部对于 ALGORITHM 的选择策略是：如果用户显式指定了 ALGORITHM，那么使用用户指定的选项；如果用户未指定，那么如果该操作支持 INPLACE 则优先选择 INPLACE，否则选择 COPY；当前不支持 INPLACE 的操作主要有：</p>
+<ul>
+ <li>删除主键</li>
+ <li>修改列数据类型</li>
+ <li>修改表字符集</li>
+</ul>
+<p>我们常说的 Online DDL，其实是从 DML 操作的角度描述的，如果 DDL 操作不阻塞 DML 操作，那么这个 DDL 就是 Online 的。当前非 Online 的 DDL 其实已经比较少了，主要有：</p>
+<ul>
+ <li>新增全文索引</li>
+ <li>新增空间索引</li>
+ <li>删除主键</li>
+ <li>修改列数据类型</li>
+ <li>指定表字符集</li>
+ <li>修改表字符集</li>
+</ul>
+<p>更多详细的示例请参考上面的官方文档的地址。</p>
+<h2 id=几个问题>几个问题</h2>
+<p>最后讨论几个非常容易混淆的问题：</p>
+<ol>
+ <li>Online DDL 不会锁表，可以随意的执行。</li>
+ <li>支持 INPLACE 算法的 DDL 一定是 Online 的。</li>
+ <li>对于支持 INPLACE 算法的 DDL，DDL 操作是原地修改数据，不需要额外的数据空间。</li>
+</ol>
+<h3 id=q1-online-ddl-会不会锁表>Q1: Online DDL 会不会锁表</h3>
+<p>Online DDL 会不会锁表？要回答这个问题，首先要明确“锁表”的含义。很多 MySQL 用户经常在表无法正常的进行 DML 时就觉得是锁表了，这种说法其实过于宽泛，实际上能够影响 DML 操作的锁至少包括以下几种（默认为 InnoDB 表）：</p>
+<ul>
+ <li>MDL 锁</li>
+ <li>表锁</li>
+ <li>行锁</li>
+ <li>GAP 锁</li>
+</ul>
+<p>其中除了 MDL 锁是在 Server 层加的之外，其它三种都是在 InnoDB 层加的。具体的加锁逻辑不在此进行展开，但是需要明确一点：所有的操作（不管是 DDL 还是 DML 还是查询语句）都需要先拿 Server 层的 MDL 锁，然后再去拿 InnoDB 层的某个需要的锁。一个 DDL 的基本过程是这样的：</p>
+<ol>
+ <li>首选，在开始进行 DDL 时，需要拿到对应表的 MDL X 锁，然后进行一系列的准备工作；</li>
+ <li>然后将 MDL X 锁降级为 MDL S 锁，进行真正的 DDL 操作；</li>
+ <li>最后再次将 MDL S 锁升级为 MDL X 锁，完成 DDL 操作，释放 MDL 锁；</li>
+</ol>
+<p>所以在真正执行 DDL 操作期间，确实是不会“锁表”的，但是如果在第一阶段拿 MDL X 锁时无法正常获取，那就可能真的会“锁表了”。一个简单的例子如下：</p>
+<div class="language-sql highlighter-rouge"><div class=highlight><pre class=highlight><code class="hljs sql"><span class=o>#</span> <span class=k>session</span> <span class=mi>1</span>
+<span class=k><span class=hljs-operator><span class=hljs-keyword>select</span></span></span><span class=hljs-operator> </span><span class=n><span class=hljs-operator><span class=hljs-keyword>sleep</span></span></span><span class=p><span class=hljs-operator>(</span></span><span class=mi><span class=hljs-operator><span class=hljs-number>300</span></span></span><span class=p><span class=hljs-operator>)</span></span><span class=hljs-operator> </span><span class=k><span class=hljs-operator><span class=hljs-keyword>from</span></span></span><span class=hljs-operator> </span><span class=n><span class=hljs-operator>mytest</span></span><span class=p><span class=hljs-operator>.</span></span><span class=n><span class=hljs-operator>t1</span></span><span class=p><span class=hljs-operator>;</span></span>
+
+<span class=o>#</span> <span class=k>session</span> <span class=mi>2</span>
+<span class=n><span class=hljs-operator><span class=hljs-keyword>optimize</span></span></span><span class=hljs-operator> </span><span class=k><span class=hljs-operator><span class=hljs-keyword>table</span></span></span><span class=hljs-operator> </span><span class=n><span class=hljs-operator>mytest</span></span><span class=p><span class=hljs-operator>.</span></span><span class=n><span class=hljs-operator>t1</span></span><span class=p><span class=hljs-operator>;</span></span>
+
+<span class=o>#</span> <span class=k>session</span> <span class=mi>3</span>
+<span class=k><span class=hljs-operator><span class=hljs-keyword>select</span></span></span><span class=hljs-operator> </span><span class=o><span class=hljs-operator>*</span></span><span class=hljs-operator> </span><span class=k><span class=hljs-operator><span class=hljs-keyword>from</span></span></span><span class=hljs-operator> </span><span class=n><span class=hljs-operator>mytest</span></span><span class=p><span class=hljs-operator>.</span></span><span class=n><span class=hljs-operator>t1</span></span><span class=p><span class=hljs-operator>;</span></span>
+
+</code></pre></div></div>
+<p>session 1 模拟了一个慢查询，然后 session 2 开始进行 DDL 操作，无法拿到 MDL X 锁，处于等到中。此时 session 3 需要执行一个查询，发现无法执行。实际上，在 session 1 结束前，表 t1 的所有操作都无法进行了，也可以说表 t1 “锁表”了。MySQL 5.7/8.0 可以在开启 performance_schema 的情况下直接查询 metadata_locks 表。阿里云 RDS 5.6 版本新增了 I_S.MDL_INFO 表，提供 MDL 的查询。</p>
+<div class="language-sql highlighter-rouge"><div class=highlight><pre class=highlight><code class="hljs cs"><span class=n>MySQL</span> <span class=p>[</span><span class=n>performance_schema</span><span class=p>]</span><span class=o>&gt;</span> <span class=k><span class=hljs-keyword>select</span></span> <span class=o>*</span> <span class=k><span class=hljs-keyword>from</span></span> <span class=n>metadata_locks</span> <span class=k><span class=hljs-keyword>where</span></span> <span class=n>OBJECT_NAME</span> <span class=o>=</span> <span class=s1><span class=hljs-string>'t1'</span></span><span class=p>;</span>
+<span class=o>+</span><span class=c1>-------------+---------------+-------------+-------------+-----------------------+----------------------+---------------+-------------+-------------------+-----------------+----------------+</span>
+<span class=o>|</span> <span class=n>OBJECT_TYPE</span> <span class=o>|</span> <span class=n>OBJECT_SCHEMA</span> <span class=o>|</span> <span class=n>OBJECT_NAME</span> <span class=o>|</span> <span class=k>COLUMN_NAME</span> <span class=o>|</span> <span class=n>OBJECT_INSTANCE_BEGIN</span> <span class=o>|</span> <span class=n>LOCK_TYPE</span>            <span class=o>|</span> <span class=n>LOCK_DURATION</span> <span class=o>|</span> <span class=n>LOCK_STATUS</span> <span class=o>|</span> <span class=k>SOURCE</span>            <span class=o>|</span> <span class=n>OWNER_THREAD_ID</span> <span class=o>|</span> <span class=n>OWNER_EVENT_ID</span> <span class=o>|</span>
+<span class=o>+</span><span class=c1>-------------+---------------+-------------+-------------+-----------------------+----------------------+---------------+-------------+-------------------+-----------------+----------------+</span>
+<span class=o>|</span> <span class=k>TABLE</span>       <span class=o>|</span> <span class=n>mytest</span>        <span class=o>|</span> <span class=n>t1</span>          <span class=o>|</span> <span class=k>NULL</span>        <span class=o>|</span>       <span class=mi><span class=hljs-number>140730442220576</span></span> <span class=o>|</span> <span class=n>SHARED_READ</span>          <span class=o>|</span> <span class=n>TRANSACTION</span>   <span class=o>|</span> <span class=k>GRANTED</span>     <span class=o>|</span> <span class=n>sql_parse</span><span class=p>.</span><span class=n>cc</span><span class=p>:</span><span class=mi><span class=hljs-number>5916</span></span> <span class=o>|</span>            <span class=mi><span class=hljs-number>1083</span></span> <span class=o>|</span>             <span class=mi><span class=hljs-number>24</span></span> <span class=o>|</span>
+<span class=o>|</span> <span class=k>TABLE</span>       <span class=o>|</span> <span class=n>mytest</span>        <span class=o>|</span> <span class=n>t1</span>          <span class=o>|</span> <span class=k>NULL</span>        <span class=o>|</span>       <span class=mi><span class=hljs-number>140730576178368</span></span> <span class=o>|</span> <span class=n>SHARED_NO_READ_WRITE</span> <span class=o>|</span> <span class=n>TRANSACTION</span>   <span class=o>|</span> <span class=n>PENDING</span>     <span class=o>|</span> <span class=n>sql_parse</span><span class=p>.</span><span class=n>cc</span><span class=p>:</span><span class=mi><span class=hljs-number>5916</span></span> <span class=o>|</span>            <span class=mi><span class=hljs-number>1091</span></span> <span class=o>|</span>              <span class=mi><span class=hljs-number>3</span></span> <span class=o>|</span>
+<span class=o>|</span> <span class=k>TABLE</span>       <span class=o>|</span> <span class=n>mytest</span>        <span class=o>|</span> <span class=n>t1</span>          <span class=o>|</span> <span class=k>NULL</span>        <span class=o>|</span>       <span class=mi><span class=hljs-number>140730374843168</span></span> <span class=o>|</span> <span class=n>SHARED_READ</span>          <span class=o>|</span> <span class=n>TRANSACTION</span>   <span class=o>|</span> <span class=n>PENDING</span>     <span class=o>|</span> <span class=n>sql_parse</span><span class=p>.</span><span class=n>cc</span><span class=p>:</span><span class=mi><span class=hljs-number>5916</span></span> <span class=o>|</span>            <span class=mi><span class=hljs-number>1092</span></span> <span class=o>|</span>              <span class=mi><span class=hljs-number>3</span></span> <span class=o>|</span>
+<span class=o>+</span><span class=c1>-------------+---------------+-------------+-------------+-----------------------+----------------------+---------------+-------------+-------------------+-----------------+----------------+</span>
+<span class=mi><span class=hljs-number>3</span></span> <span class=k><span class=hljs-function>rows</span></span><span class=hljs-function> </span><span class=k><span class=hljs-function><span class=hljs-keyword>in</span></span></span><span class=hljs-function> </span><span class=k><span class=hljs-function><span class=hljs-title>set</span></span></span><span class=hljs-function> </span><span class=p><span class=hljs-function><span class=hljs-params>(</span></span></span><span class=mi><span class=hljs-function><span class=hljs-params><span class=hljs-number>0</span></span></span></span><span class=p><span class=hljs-function><span class=hljs-params><span class=hljs-number>.</span></span></span></span><span class=mi><span class=hljs-function><span class=hljs-params><span class=hljs-number>00</span></span></span></span><span class=hljs-function><span class=hljs-params> </span></span><span class=n><span class=hljs-function><span class=hljs-params>sec</span></span></span><span class=p><span class=hljs-function><span class=hljs-params>)</span></span></span><span class=hljs-function>
+
+</span></code></pre></div></div>
+<p>明确了上面的概念之后，再回到我们的问题，Online DDL 是不是不锁表？如果非要回答，那么只能说，Online DDL 并不是绝对安全，更不是可以随意的执行。线上操作还是需要在业务低峰期谨慎操作。</p>
+<h3 id=q2-支持-inplace-算法的-ddl-一定是-online-的>Q2: 支持 INPLACE 算法的 DDL 一定是 Online 的</h3>
+<p>从概念上来说，INPLACE 和 Online 是两个不同维度的事情。COPY 和 INPLACE 指的是 DDL 内部的执行逻辑，可以简单的理解成：COPY 是在 Server 层的操作，INPLACE 是在 InnoDB 层的操作。而用户更加关心 Online 与否，通常只与一个问题有关：是否允许并发 DML。两个基本结论：</p>
+<ol>
+ <li>COPY 算法执行的 DDL 肯定不是 Online 的；</li>
+ <li>INPLACE 算法执行的 DDL 不一定是 Online 的；</li>
+</ol>
+<h3 id=q3-inplace-ddl-需不需要额外的数据空间>Q3: INPLACE DDL 需不需要额外的数据空间</h3>
+<p>前面我们提到过，MySQL 内部对于 DDL 的 ALGORITHM 有两种选择：INPLACE 和 COPY（8.0 新增了 INSTANT，但是使用范围较小）。COPY 算法理解起来相对简单一点：创建一张临时表，然后将原表的数据拷贝到临时表中，最后再用临时表替换原表。对于上面的步骤，由于需要将原表的数据拷贝到临时表中，所以肯定需要消耗额外的数据空间。</p>
+<p>那么对于支持 INPLACE 算法的 DDL，是不是不需要额外的数据空间？答案是：需要。其实之所以会问这个问题，还是因为对 INPLACE 本身的理解出现了偏差。简单来说：INPLACE 描述的是表，而不是数据文件。只要不创建临时表，那么都是 INPLACE 的。</p>
+<p>实际上，很多 INPLACE DDL 都会重建表（会创建临时数据文件），所以都会需要额外的数据空间，例如：</p>
+<ul>
+ <li>增加主键</li>
+ <li>重建主键</li>
+ <li>新增列（8.0 支持 INSTANT DDL，不需要）</li>
+ <li>删除列</li>
+ <li>调整列顺序</li>
+ <li>删除列默认值</li>
+ <li>增加列默认值</li>
+ <li>修改表的 ROW_FORMAT</li>
+ <li>OPTIMIZE 表</li>
+</ul>
+<h2 id=总结>总结</h2>
+<p>本文主要是对 MySQL Online DDL 进行了一个简单的整理和总结，更多关于 MySQL 内部实现细节和源码的分析，请关注后续文章。</p>
+ </div>
+</div>
+ <footer>
+ 
+ 
+ <a href=http://mysql.taobao.org/ target=_blank class=muted>阿里云PolarDB-数据库内核组</a>
+ <br>
+ <a href=https://zhuanlan.zhihu.com/p/146555952 target=_blank class=muted>社招/校招 欢迎投递简历 直达招聘信息</a>
+ <br>
+ <a href=https://www.zhihu.com/people/xie-rong-biao-45 target=_blank class=muted>直连月报小编</a>
+ <br>
+ <a href=https://github.com/alibaba/AliSQL target=_blank class=muted>欢迎在github上star AliSQL</a>
+ <br>
+ 阅读：<span data-hk-page=current> - </span><span class=pause> </span>
+<br>
+<a rel=license href=http://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank><img alt=知识共享许可协议 style=border-width:0 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAfCAMAAABUFvrSAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IB2cksfwAAAf5QTFRF////////////////8fHx7+/v6Ofn4+Pj4N/g39/f1tXV09bS0tXS0tXR0dTR0dTQ0NTQ0NPPz9PPztLOztHNzdHNzdHMz8/PzdDMzNDMzNDLzM/Ly8/Ly8/Ky87Kys3Jyc3Jyc3Iy8rLyMzIyMzHx8vHxsrGycjIxsrFxcnFyMfHxcnExMnExMjDw8jDxMfDw8fCwsfCwcXAwMXAwMW/wMS/v8S+v8O+vsO+vsK9vcK9vcK8v7+/vMG8vMG7vMC8u8C7u8C6ur+6ur+5ub65ub64uL23t7y2urm5tru1tbq0tLqztLmzs7iysrixtbW1srexsbewsLavsLWvr7Wur7SusLOvrrStrrOtr7KvrbOsrLKrr6+vq7GqrKurpqqmo6ijoqaho6Ghn6OenqCdn5+fnp2dn5aampiZlpmWlZmUmJaXk5iTkZSRkZORkY+Pj4+PiYyJjIqLjoeLh4aHhIaEhIWEgoWChIGCf4F+gICAfX98fH98fnt8en15eXx5eHV2dnN0dXJzcHJvcHBwbmxsaGVmY19hYGBgXV5dWldYUFFQUFBQQ0RDQEBAPj8+Pzs8Pzc5NTY1MjMxMjExMDAwMS0uLS0tKioqKSopKSkpKCkoKCgoKicnKCUmJCQkIx8gICAgHxscGxsbGRkZEBAQDg4ODQ4NDQwNAAAA4LK4NQAAAAN0Uk5TAAoO5yEBUwAAA+1JREFUeNq1lot3GkUUxlcviEDS7bYbKxC2oaWKSUmRpkkrSBvzIMGkJjGamoSobROtNqRVWyOppli0NBBSHxst+JiYUvr9l57dheVx8ESpncOeOfvbnW92vjv3DtyzeCqN44BIeCh02t/tcXdIDpvN4Tzs9nj9faHBcGR88u2Z2dm56H9vAIdIeCBwyudxOUWBb7FaW/YJYrvL4+sJDCjK0zOzc00pcwgPBE56j0kif3OzqCyiuHmDP+h0H/e/NhCOnJ+avjA7t55THuTWK+P2JOAwFDjpdduF2G7FoN1lwebq8gcGw2MTUzOf5IFsMpkF8le1UVf3JuAQOuV12/g0gEIqHgzGUwUA6RMvuI73hIZGxyc/fISMmYjInMEjddSlf0HA4bTvmF3RLcSNpLXFApA/YXP7+vqHIxM5pIgIUB4grwzKq2Rlo46YOjtNOgEHv0cS0oBsJr0ZZSAtOD3+wNDoGjKWsjBlsB6NruPnj4lWHj5OmHSSsdBFxhgbKRFFuPuoGANkI1Gt8vJBl7e3P/wAVTOakYtGc/iD3f8e8S+woBMzdbIf7iYYW9GIIuxx8rsoHKKaZixgl2/3+F8fQla5T0FdPmURjSL77W3GWMJkqRAyfMQ+J1pi2xpRhN1tN4E41bVF4Ibo9p0ZQJJUJzQvkopMkqgzASBhqRDDn+w3IhNjz6lEEe44sImCkSiYyWbjWneNiArYFA57e/sbCxOZEtuMbYzo5K1fgqrw87qwxBeVZQbVHZydV7uUsvjiPmdXz7lGVhCRYYksSrTul8nIxZeJFhirWOFoBa4RydgxB3cWZcjm+Z1F1YsWh8cf+lULnvbBeqhog21vI7Hw9V9lssTY6urv7NNK8OxWIKiMjGsCJbuDgNX2kj/0FTJUv90yRKbVh49XDNVkVVnAd4bKdttDePhBJUGS1Qny2UYdObKwYNFJjRXGQztxGbLSVawYfr/ZlC4FrxQ1PXhJFHmpq+fc8Jsf5AA5lZQrJedSfk+ibrc0CqRvt/ms2tEONoUOb+8b4bHJd75pqmy622KqF40S5NUzg6PjUzNNHCLg8Iqa0uZ/SunI+WaFu4+KlxsVoZjo6u7rD49NTF+Ya0oYtyThHiBXlSGzWjalL5/omAZwx7G/utAb4wXgR95+C08qjDXb/nt1RxP/4hX9HS0/oF0a0S4i1L1EtcJYcwiXqw/TmGC/UjWm9KMqldJ9zVQ1QBPGHUnkY+Xjf5kXpWofymWzeiqqmag8F1G9MH56z9l2gG+1Wlt5QWx/d6tmTJ0RZRuohtUtgdP51vWzksNud0hnr2/VxqHRF9d7XI5DA+H/+1/hM09J92+7pmyRGJsTpgAAAABJRU5ErkJggg=="></a><br>本作品采用<a rel=license href=http://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank>知识共享署名-非商业性使用-相同方式共享 3.0 未本地化版本许可协议</a>进行许可。
+</footer>
+ <a href=#0 class="cd-top cd-is-visible cd-fade-out"><svg version=1.1 id=Layer_1 xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink x=0px y=10px width=38px height=60px viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space=preserve>
+ <polygon fill=#FFFFFF points="8,2.8 16,10.7 13.6,13.1 8.1,7.6 2.5,13.2 0,10.7 "></polygon>
+ </svg>
+ </a>
+ 
