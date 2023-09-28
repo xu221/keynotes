@@ -41,4 +41,15 @@ with webdriver.Chrome(executable_path='/root/softwares/chromedriver', chrome_opt
     driver.save_screenshot('aaa.png')
 ```
 
+3.新增的驱动管理
+```
+# 之前
+from selenium import webdriver
+driver = webdriver.Chrome('/home/user/drivers/chromedriver')
+
+# 现在
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+driver = webdriver.Chrome(ChromeDriverManager().install())
+```
 
