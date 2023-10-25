@@ -35,7 +35,7 @@ function traceBinlog(){ # <-USER, <-HOST
 traceBinlog root '127.0.0.1'
 
 # <远程导出DML关键字匹配到的binlog信息>
-mysqlbinlog -R -vv -h'' -u'' -p'' --start-datetime='2020-11-17 14:20:10' --stop-datetime='2020-11-18 14:20:10' --base64-output=decode-rows binlog_0001.logbin  | grep -A int(columncounts)+1 'update'> aaa.log
+mysqlbinlog -R -vv -h'' -u'' -p'' --start-datetime='2020-11-17 14:20:10' --stop-datetime='2020-11-18 14:20:10' --base64-output=decode-rows binlog_0001.logbin  | grep -A int(columncounts)+1 'UPDATE'> aaa.log
 # </>
 
 # <将多行SQL合并为一个INSERT语句>
