@@ -202,6 +202,7 @@ wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel80-x86_64-10
 
 ```
 mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 -o /root/mongosbakup
+# ISODate数据类型过滤：-q '{"create_time": {"$gt": {"$date": "2023-09-29T00:00:01.000Z"}, "$lte": {"$date": "2023-10-15T00:00:01.000Z"}}}'
 ```
 
 2.备份所有库
