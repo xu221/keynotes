@@ -407,63 +407,6 @@ testdb1.tb
         { "id" : 23692 } -->> { "id" : { "$maxKey" : 1 } } on : replicamg Timestamp(3, 0) 
 ```
 
-#### mongos集群备份
-
-> BACKUP
-
-```
-wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel80-x86_64-100.5.0.tgz
-```
-
-1.备份指定库
-
-```
-mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 -o /root/mongosbakup
-```
-
-2.备份所有库
-
-```
-mongodump --host 127.0.0.1 --port 20004  -o /root/mongosbakup
-```
-
-3.备份指定集合
-
-```
-mongodump --host 127.0.0.1 --port 20004 -d testdb1 -c tb1 -o /root/mongosbakup
-```
-
-4.导出指定集合为json
-
-```
-mongoexport --host 127.0.0.1 --port 20004 -d testdb1 -c tb -o /root/mongosbakup/tb.json
-```
-
-> RESTORE
-
-1.恢复指定库
-
-```
-mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 --dir=/root/mongosbakup/testdb1
-```
-
-2.恢复所有库
-
-```
-mongorestore --host 127.0.0.1 --port 20004 /root/mongosbakup
-```
-
-3.恢复指定集合
-
-```
-mongorestore --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbakup/tb1.bson
-```
-
-4.导入指定集合
-
-```
-mongoimport --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbakup/tb.json
-```
 
 #### 停止mongodb集群
 
