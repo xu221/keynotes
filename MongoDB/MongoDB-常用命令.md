@@ -48,9 +48,35 @@ collections.forEach(function(collection) {
     var storageSize = db[collection].totalSize()/1024/1024/1024;
     print("Collection: " + collection + ", Storage Size: " + storageSize + " Gbytes");
 });
-
 ```
 
+3.分批次删除数据
+```
+var delete_date = "2023-08-01";
+var start_time = new Date();
+rows = db.collection_tst.find({"Time": {$lt: delete_date}}).count() //1
+print("total rows:", rows);
+var batch_num = 2000;
+while (rows > 0) {
+    if (rows < batch_num) {
+        batch_num = rows;
+    }
+    var cursor = db.collection_tst.find({"Time": {$lt: delete_date}}, {"_id": 1}).sort({"_id": 1}).limit(batch_num); //2
+    rows = rows - batch_num;
+    var delete_ids = [];
+    // 将满足条件的主键值放入到数组中。
+    cursor.forEach(function (each_row) {
+        delete_ids.push(each_row["_id"]);
+    });
+    // 通过deleteMany一次删除5000条记录。
+    db.collection_tst.deleteMany({   //3
+        '_id': {"$in": delete_ids},
+        "Time": {'$lt': delete_date} //4
+    },{w: "majority"})
+}
+var end_time = new Date();
+print((end_time - start_time) / 1000);
+```
 
 > 分片集群相关:mongos登录
 
@@ -249,3 +275,36 @@ mongorestore --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosba
 mongoimport --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbakup/tb.json
 ```
 
+> 集合删数据释放空间
+
+1.先备份部分
+```
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-01", "$lt": "2023-08-02"}}' -o ./1
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-02", "$lt": "2023-08-10"}}' -o ./2
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-10", "$lt": "2023-08-20"}}' -o ./3
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-20", "$lt": "2023-08-30"}}' -o ./4
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-30", "$lt": "2023-09-10"}}' -o ./5
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-09-10", "$lt": "2023-09-20"}}' -o ./6
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-09-20", "$lt": "2023-09-30"}}' -o ./7
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-09-30", "$lt": "2023-10-10"}}' -o ./8
+```
+
+2.改名
+```
+test_col --> test_col_20231012_bak
+```
+
+3.备份剩下的
+```
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col_20231012_bak -q '{"time_res":{"$gte": "2023-10-10"}}' -o ./9
+```
+4.恢复插入
+```
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./1/test_db/test_col.bson
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./2/test_db/test_col.bson
+```
+
+5.
+```
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./9/test_db/test_col_20231012_bak.bson
+```
