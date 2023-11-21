@@ -29,3 +29,19 @@ SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type FROM INFORMATION_SCHEMA.`COLUMN
 
 -- 查询自增字段当前值并生成跳段语句
 SELECT CONCAT('alter table ', table_schema, '.', table_name, ' auto_increment=', AUTO_INCREMENT+3000, ';') FROM information_schema.tables WHERE table_schema LIKE "db_%" AND AUTO_INCREMENT IS NOT NULL ;
+
+-- 大表数据删除
+Create /* pt-online-schema-change */ table `confluence`.`_sbtest1_new` like `confluence`.`sbtest1` ;
+
+CREATE TRIGGER `pt_osc_confluence_sbtest1_del` AFTER DELETE ON `confluence`.`sbtest1` 
+    FOR EACH ROW DELETE IGNORE FROM `confluence`.`_sbtest1_new` WHERE `confluence`.`_sbtest1_new`.`id` <=> OLD.`id`;
+CREATE TRIGGER `pt_osc_confluence_sbtest1_upd` AFTER UPDATE ON `confluence`.`sbtest1` 
+    FOR EACH ROW REPLACE INTO `confluence`.`_sbtest1_new` (`id`, `k`, `c`, `pad`) VALUES (NEW.`id`, NEW.`k`, NEW.`c`, NEW.`pad`);
+CREATE TRIGGER `pt_osc_confluence_sbtest1_ins` AFTER INSERT ON `confluence`.`sbtest1` 
+    FOR EACH ROW REPLACE INTO `confluence`.`_sbtest1_new` (`id`, `k`, `c`, `pad`) VALUES (NEW.`id`, NEW.`k`, NEW.`c`, NEW.`pad`);
+
+INSERT LOW_PRIORITY IGNORE INTO `confluence`.`_sbtest1_new` (`id`, `k`, `c`, `pad`) 
+   SELECT `id`, `k`, `c`, `pad` FROM `confluence`.`sbtest1` FORCE INDEX(`PRIMARY`) WHERE ((`id` >= '4692805')) AND ((`id` <= '4718680')) 
+   LOCK IN SHARE MODE /*pt-online-schema-change 46459 copy nibble*/
+
+RENAME TABLE sbtest1 TO sbtest1_dba_bak, _sbtest1_new TO sbtest1;
