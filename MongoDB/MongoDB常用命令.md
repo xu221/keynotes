@@ -279,7 +279,8 @@ mongoimport --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbak
 
 1.先备份部分
 ```
-./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-01", "$lt": "2023-08-02"}}' -o ./1
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gt": {"$date": "2023-08-01T00:00:01.000Z"}, "$lte": {"$date": "2023-08-02T00:00:01.000Z"}}}' -o ./1
+# ISO时间类型写法！！！下面是字符串比较
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-02", "$lt": "2023-08-10"}}' -o ./2
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-10", "$lt": "2023-08-20"}}' -o ./3
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-20", "$lt": "2023-08-30"}}' -o ./4
