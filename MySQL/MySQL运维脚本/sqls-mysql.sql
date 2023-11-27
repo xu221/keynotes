@@ -45,3 +45,17 @@ INSERT LOW_PRIORITY IGNORE INTO `confluence`.`_sbtest1_new` (`id`, `k`, `c`, `pa
    LOCK IN SHARE MODE /*pt-online-schema-change 46459 copy nibble*/
 
 RENAME TABLE sbtest1 TO sbtest1_dba_bak, _sbtest1_new TO sbtest1;
+
+-- 关于load 文本数据
+-- 如果每个字段数据被符号(这里是"")正常包裹，用下面load命令或者大多数客户端都可以。
+LOAD DATA LOCAL INFILE 'F:/1.csv'
+INTO TABLE table_test
+character set gbk
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
+IGNORE 1 lines
+(`name`,`age`,`description`);
+
+-- 如果字段被逗号(,)分隔,但是数据却没有用符号包裹，甚至数据中有逗号字符，那这种方式很可能失败，包括很多mysql客户端。
+-- DATAGRIP或者Navicat客户端在这个方面比较强，这种情况也能正确分割导入。
