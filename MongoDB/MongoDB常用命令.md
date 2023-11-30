@@ -216,6 +216,51 @@ db.currentOp()
 db.killOp("opid")
 ```
 
+4.实例连接数查询
+
+```
+var commandResult = db.adminCommand({ currentConn: 1 });
+
+// 检查是否有结果以及结果是否是一个数组
+if (commandResult['inprog']) {
+    var aggregationResult = commandResult['inprog'].reduce(function (acc, doc) {
+        var client = doc.client;
+
+        // 提取冒号前缀
+        var prefix = client.split(':')[0];
+
+        // 初始化计数
+        if (!acc[prefix]) {
+            acc[prefix] = 0;
+        }
+
+        // 增加计数
+        acc[prefix]++;
+
+        return acc;
+    }, {});
+
+    // 转换为数组形式
+    var resultArray = Object.keys(aggregationResult).map(function (prefix) {
+        return { _id: prefix, count: aggregationResult[prefix] };
+    });
+
+    // 按计数降序排序
+    resultArray.sort(function (a, b) {
+        return b.count - a.count;
+    });
+
+    // 显示结果
+    resultArray.forEach(function (result) {
+        print(result._id + ": " + result.count);
+    });
+} else {
+    print("Command did not return expected results.");
+}
+
+```
+
+
 #### mongos集群备份
 
 > BACKUP
