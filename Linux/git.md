@@ -64,7 +64,7 @@ git pull origin master
 6.版本回退
 ```
 # 回退到上一个版本
-git reset --hard HEAD
+git reset --hard HEAD^
 ```
 
 7.清除缓存
