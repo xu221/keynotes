@@ -23,3 +23,6 @@ getconf LONG_BIT
 
 # 结果大于0, 说明支持64bit计算. lm指long mode, 支持lm则是64bit
 cat /proc/cpuinfo | grep flags | grep ' lm ' | wc -l
+
+# 强制杀死进程
+kill -9 $(ps -ef | grep 'ccc.py' | awk 'NR>1 {print $2}')
