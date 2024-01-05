@@ -45,6 +45,7 @@ pt-archiver \
 --dest   h=ip2,P=3306,u=admin,p='xxx',D=db2,t=table2,A=utf8 \
 --where '1=1' \
 --txn-size 10000 --limit=10000 --progress 10000 --no-delete --bulk-insert
+# --where "CreateDate <'2017-05-01 00:00:00' "
 ```
 
 如：迁移db1.table2
