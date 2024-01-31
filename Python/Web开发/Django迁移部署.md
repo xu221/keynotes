@@ -138,3 +138,8 @@ ln -s 源python3 ./
 ln -s python3 python
 ```
 
+4.重新设置pip的#!注释路径[如果有需要]
+```
+vim pip
+#! xxxx
+```
