@@ -142,4 +142,5 @@ ln -s python3 python
 ```
 vim pip
 #! xxxx
+vim pip3
 ```
