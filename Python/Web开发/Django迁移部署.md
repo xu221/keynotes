@@ -104,6 +104,7 @@ python3 manage.py runserver 0:8001
 ```
 openssl genrsa -out server.key 1024
 openssl req -new -key server.key -out server.csr
+# 这一步可以生成CN，或许对域名匹配有用
 openssl x509 -req -in server.csr -out server.crt -signkey server.key -days 3650
 ```
 
