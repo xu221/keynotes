@@ -25,6 +25,13 @@ db.oplog.rs.find({ "ts" : { "$lt" : Timestamp(now_time, 1), "$gt" : Timestamp(no
 db.realtimeBuildMessage.find().sort({_id:-1}).limit(1)
 ```
 
+4.查询ISODATA数据类型
+
+```shell
+db.ccccc.find({"timeat":{"$gt": new ISODate("2024-01-30T00:00:00.000Z")}}).count()
+```
+
+
 > 数据相关
 
 1.更新集合中的所有文档
