@@ -1,3 +1,4 @@
+```python3
 import psutil
 
 def kill_process_and_children(pid):
@@ -39,3 +40,4 @@ if saved_pid is not None:
     kill_process_and_children(saved_pid)
 else:
     print("No saved PID found.")
+```
