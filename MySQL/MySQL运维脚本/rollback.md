@@ -1,6 +1,6 @@
 #### 数据误删不要怕，快速回滚
 
-> 参考：https://github.com/liuhr/my2sql
+> 参考：https://github.com/liuhr/my2sql  
 > 建议：能用二进制包就用二进制包，简单快速无需编译。
 
 1.条件
