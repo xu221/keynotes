@@ -1,6 +1,7 @@
 #### 数据误删不要怕，快速回滚
 
-> 参考：https://github.com/liuhr/my2sql，能用二进制包就用二进制包，简单快速无需编译。
+> 参考：https://github.com/liuhr/my2sql
+> 建议：能用二进制包就用二进制包，简单快速无需编译。
 
 1.条件
 ```
@@ -29,3 +30,7 @@ INSERT XXX ;
 INSERT XXX ;
 ```
 
+5.建议
+```
+注意DDL权限管控以及truncate命令的谨慎使用，不能回滚truncate，如果这样，只能依托从备份中还原到点point2time，参考-> MySQL备份
+```
