@@ -279,26 +279,26 @@ wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel80-x86_64-10
 1.备份指定库
 
 ```
-mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 -o /root/mongosbakup
+mongodump --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin --gzip -d testdb1 -o /root/mongosbakup
 # ISODate数据类型过滤：-q '{"create_time": {"$gt": {"$date": "2023-09-29T00:00:01.000Z"}, "$lte": {"$date": "2023-10-15T00:00:01.000Z"}}}'
 ```
 
 2.备份所有库
 
 ```
-mongodump --host 127.0.0.1 --port 20004  -o /root/mongosbakup
+mongodump --host 127.0.0.1 --port 20004 --gzip -o /root/mongosbakup
 ```
 
 3.备份指定集合
 
 ```
-mongodump --host 127.0.0.1 --port 20004 -d testdb1 -c tb1 -o /root/mongosbakup
+mongodump --host 127.0.0.1 --port 20004 --gzip -d testdb1 -c tb1 -o /root/mongosbakup
 ```
 
 4.导出指定集合为json
 
 ```
-mongoexport --host 127.0.0.1 --port 20004 -d testdb1 -c tb -o /root/mongosbakup/tb.json
+mongoexport --host 127.0.0.1 --port 20004 --gzip -d testdb1 -c tb -o /root/mongosbakup/tb.json
 ```
 
 > RESTORE
@@ -306,34 +306,34 @@ mongoexport --host 127.0.0.1 --port 20004 -d testdb1 -c tb -o /root/mongosbakup/
 1.恢复指定库
 
 ```
-mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin -d testdb1 --dir=/root/mongosbakup/testdb1
+mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin --gzip -d testdb1 --dir=/root/mongosbakup/testdb1
 ```
 
 2.恢复所有库
 
 ```
-mongorestore --host 127.0.0.1 --port 20004 /root/mongosbakup
+mongorestore --host 127.0.0.1 --port 20004 --gzip /root/mongosbakup
 ```
 
 3.恢复指定集合
 
 ```
-mongorestore --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbakup/tb1.bson
+mongorestore --host 127.0.0.1 --port 20004 --gzip -d testdb1 -c tb --dir=/root/mongosbakup/tb1.bson
 ```
 
 4.导入指定集合
 
 ```
-mongoimport --host 127.0.0.1 --port 20004 -d testdb1 -c tb --dir=/root/mongosbakup/tb.json
+mongoimport --host 127.0.0.1 --port 20004 --gzip -d testdb1 -c tb --dir=/root/mongosbakup/tb.json
 ```
 
 > 集合删数据释放空间
 
 1.先备份部分
 ```
-./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gt": {"$date": "2023-08-01T00:00:01.000Z"}, "$lte": {"$date": "2023-08-02T00:00:01.000Z"}}}' -o ./1
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col -q '{"time_res":{"$gt": {"$date": "2023-08-01T00:00:01.000Z"}, "$lte": {"$date": "2023-08-02T00:00:01.000Z"}}}' -o ./1
 # ISO时间类型写法！！！下面是字符串比较
-./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-02", "$lt": "2023-08-10"}}' -o ./2
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-02", "$lt": "2023-08-10"}}' -o ./2
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-10", "$lt": "2023-08-20"}}' -o ./3
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-20", "$lt": "2023-08-30"}}' -o ./4
 ./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col -q '{"time_res":{"$gte": "2023-08-30", "$lt": "2023-09-10"}}' -o ./5
@@ -349,15 +349,15 @@ test_col --> test_col_20231012_bak
 
 3.备份剩下的
 ```
-./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col_20231012_bak -q '{"time_res":{"$gte": "2023-10-10"}}' -o ./9
+./mongodump --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col_20231012_bak -q '{"time_res":{"$gte": "2023-10-10"}}' -o ./9
 ```
 4.恢复插入
 ```
-./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./1/test_db/test_col.bson
-./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./2/test_db/test_col.bson
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col --dir=./1/test_db/test_col.bson
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col --dir=./2/test_db/test_col.bson
 ```
 
 5.
 ```
-./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin -d test_db -c test_col --dir=./9/test_db/test_col_20231012_bak.bson
+./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col --dir=./9/test_db/test_col_20231012_bak.bson
 ```
