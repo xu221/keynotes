@@ -1,8 +1,8 @@
 #### 截图ocr并移动鼠标点击
-> pip3 install pytesseract  
+> OCR引擎[windows版]下载地址：https://github.com/UB-Mannheim/tesseract/wiki  
 > 模型下载地址：https://github.com/tesseract-ocr/tessdata/blob/main/chi_sim.traineddata  
-> 将模型放入tessdata目录
->
+> 将模型放入tessdata目录  
+> pip3 install pytesseract  
 
 ```python3
 import pytesseract
