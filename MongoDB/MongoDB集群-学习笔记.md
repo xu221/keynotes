@@ -517,3 +517,19 @@ PRIMARY> rs.conf()
 PRIMARY> rs.add("<new_node_host>:<new_node_port>")
 PRIMARY> rs.conf()
 ```
+
+> 逻辑卷快照方法
+
+1.快照期间需要禁止写或者从停止的从节点创建也行
+```
+db.fsyncLock();
+```
+
+2.创建逻辑快照
+
+3.解锁
+```
+db.fsyncLock();
+```
+
+4.快照传输并启动连接主节点
