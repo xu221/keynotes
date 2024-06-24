@@ -482,3 +482,24 @@ db.shutdownServer()
 /root/services/mongodb-5.0.3-mongos-host1/bin/mongos --config=/root/services/mongodb-5.0.3-mongos-host1/mongodb.conf --fork
 ```
 
+#### 记录给单机数据库增加从节点
+
+1.备份主数据
+```shell
+mongodump --host <primary_host> --port <primary_port> --out /path/to/backup --oplog
+```
+
+2.导入从节点新数据库
+```shell
+mongorestore --host <new_node_host> --port <new_node_port> --dir /path/to/backup --oplogReplay
+```
+
+3.主节点新增从节点
+```shell
+PRIMARY> rs.add("<new_node_host>:<new_node_port>")
+```
+
+4.等待同步，查看状态
+```shell
+PRIMARY> rs.conf()
+```
