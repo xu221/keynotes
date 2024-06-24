@@ -484,6 +484,7 @@ db.shutdownServer()
 
 #### 记录给单机数据库增加从节点
 
+> 这种方式官方不推荐：
 1.备份主数据
 ```shell
 mongodump --host <primary_host> --port <primary_port> --out /path/to/backup --oplog
@@ -501,5 +502,18 @@ PRIMARY> rs.add("<new_node_host>:<new_node_port>")
 
 4.等待同步，查看状态
 ```shell
+PRIMARY> rs.conf()
+```
+
+#### 记录副本集集群新增节点
+1.集群从节点停止一个节点S1用作拷贝，并scp到新节点。
+
+2.启动这个节点S1，自动跟上集群。
+
+3.S3启动新的从节点
+
+4.集群主节点新增S3
+```
+PRIMARY> rs.add("<new_node_host>:<new_node_port>")
 PRIMARY> rs.conf()
 ```
