@@ -14,6 +14,7 @@ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-5.0.3-rc0.tgz
 mkdir data
 mkdir log
 touch mongodb.conf
+# 如果要快速重新搭建，需要把data目录、log目录下清空，pid文件删除才能正常启动
 ```
 
 3.
