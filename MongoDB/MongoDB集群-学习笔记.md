@@ -507,15 +507,17 @@ PRIMARY> rs.conf()
 ```
 
 #### 记录副本集集群新增节点
-1.集群从节点停止一个节点S1用作拷贝，并scp到新节点。
+1.集群从节点停止一个节点S1用作拷贝，并scp到新节点S2。
 
 2.启动这个节点S1，自动跟上集群。
 
-3.S3启动新的从节点
-
-4.集群主节点新增S3
+3.修改配置文件，bind_ip，key等，S2启动新的从节点。
 ```
-PRIMARY> rs.add("<new_node_host>:<new_node_port>")
+注意这里如果是PSA拓扑，1主1从1仲裁，需要先加仲裁，且后面添加从的时候需要设定priority和votes，切换顺序，仲裁节点会被阻塞。
+```
+```
+PRIMARY> rs.addArb({"host" : "mongodb1.example.net:27017"})
+PRIMARY> rs.add({"host" : "mongodb2.example.net:27017",  "priority" : 0,  "votes" : 1})
 PRIMARY> rs.conf()
 ```
 
