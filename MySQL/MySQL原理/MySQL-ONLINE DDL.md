@@ -41,6 +41,6 @@ ALTER TABLE `sbtest1` CHANGE `pad` `pad` CHAR(60) CHARACTER SET utf8mb4 COLLATE 
 ```
 
 ```
-无论执行什么样的DDL时，在一个新的窗口刷新检查SHOW FULL PROCESSLIST(SELECT * FROM information_schema.processlist WHERE db = 'tech_nova_ab_netflow_00' AND state like 'Waiting for table %';)是有必要的，
+无论执行什么样的DDL时，在一个新的窗口刷新检查SHOW FULL PROCESSLIST(SELECT * FROM information_schema.processlist WHERE db = 'dbx_00' AND state like 'Waiting for table %';)是有必要的，
 发现正常会话执行SQL等待某些锁时（通常出现在DDL快要结束，变更表名时争夺元数据锁），能及时KILL DDL会话或者KILL慢查询以便让DDL正常结束。
 ```
