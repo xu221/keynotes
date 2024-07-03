@@ -1,5 +1,18 @@
 #### 常用命令
 
+> 登录
+
+1.mongo
+```
+mongo --host host1 --port 27017 --username=root --password=xxx_pwd --authenticationDatabase admin
+```
+2.mongosh
+```
+mongosh "mongodb://root:xxx_pwd@host1:27017/admin?authSource=admin"
+```
+
+
+
 > OP LOG相关:仅在shard登录可查询
 
 1.查询oplog状态
