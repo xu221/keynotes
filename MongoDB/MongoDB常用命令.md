@@ -374,3 +374,29 @@ test_col --> test_col_20231012_bak
 ```
 ./mongorestore --host xx.xx.xx.xx --port 30008 --username=root --password=xxxpas --authenticationDatabase admin --gzip -d test_db -c test_col --dir=./9/test_db/test_col_20231012_bak.bson
 ```
+
+> 基于op_log回滚数据
+
+1.备份oplog
+```
+mongodump --host <host>:<port> -d local -c oplog.rs -u <user> --authenticationDatabase <adb>
+mongodump --host <host>:<port> -d local -c oplog.rs -u <user> --authenticationDatabase <adb> -q '{"$or": [{"ns": "test.dbdbd"}, {"o.applyOps.ns": "test.dbdbd"}]}'
+```
+
+2.找到误操作时间戳
+```
+bsondump dump/local/oplog.rs.bson | grep drop
+or
+> use local
+> db.oplog.rs.find({"o.drop": {$exists: true}}).sort({$natural: -1}).limit(1);
+```
+
+3.恢复到新实例 or 先恢复一个之前的全备
+```
+mkdir empty
+mongorestore --host <host>:<port> -u <user> --authenticationDatabase <adb> \
+  --oplogReplay \
+  --oplogFile dump/local/oplog.rs.bson \
+  --oplogLimit 时间戳 \
+  empty/
+```
