@@ -1,7 +1,7 @@
 #### 字典差异对比函数
-> import json
-> from rich.table import Table
-> from rich.console import Console
+> import json  
+> from rich.table import Table  
+> from rich.console import Console  
 
 ```
 def compare_dictionary(d1: dict, d2: dict) ->print :
@@ -28,9 +28,9 @@ compare_dictionary(json.loads(ss), json.loads(dd))
 ```
 
 #### 时间消耗wrapper
-> from contextlib import contextmanager
-> from random import randint
-> import time
+> from contextlib import contextmanager  
+> from random import randint  
+> import time  
 ```
 @contextmanager
 def timeblock(label):
