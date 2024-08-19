@@ -40,6 +40,16 @@
 > > [MySQL运维笔记](./MySQL/MySQL运维笔记)
 > > + note
 > >
+
+> [**Oracle**](./Oracle)
+> > Oracle-DG构建
+> >
+
+> [**PostgreSQL**](./PostgreSQL)
+> > PG中文翻译手册阅读笔记
+> >
+
+
 > [**Python开发**](./Python)
 > > [并发并行编程](./Python/并发并行编程)
 > > + 多线程
