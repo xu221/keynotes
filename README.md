@@ -34,8 +34,11 @@
 > > + MHA
 > >
 > > [MySQL运维脚本](./MySQL/MySQL运维脚本)
-> > + SQL类
-> > + linux类
+> > + MySQL5.7二进制包部署
+> > + 常用LINUX脚本
+> > + 常用查询SQL
+> > + 数据误删回滚
+> > + 无锁变更DDL
 > >
 > > [MySQL运维笔记](./MySQL/MySQL运维笔记)
 > > + note
