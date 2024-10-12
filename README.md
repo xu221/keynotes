@@ -60,7 +60,8 @@
 > > 
 > > [数据库驱动](./Python/数据库驱动)
 > > + pymongo
-> >
+> > + pymysql
+> > 
 > > [爬虫](./Python/爬虫)
 > > + selenium
 > > 
