@@ -1,6 +1,6 @@
-import pymysql
+> import pymysql
 
-
+```
 db_connection = {
         "host" : 'host11',
         "user" : 'user',
@@ -8,7 +8,9 @@ db_connection = {
         "database" : 'jydb',
         "cursorclass" : pymysql.cursors.DictCursor
 }
-
+```
+1.基本操作
+```
 with pymysql.connect(**db_connection) as connection:
     with connection.cursor() as cursor:
         # 执行查询
@@ -29,7 +31,10 @@ with pymysql.connect(**db_connection) as connection:
         cursor.execute(insert_query, data_to_insert)
         # 提交事务
         connection.commit()
+```
 
+2.安全修改数据
+```
 def done_execute_sql(self, apply_id, detail_id, execute_mode, envCode, dbname, tbname, sql):
     """如何安全地插入数据：意义在于安全插入带特殊符号的字符串"""
     query = """
@@ -57,5 +62,5 @@ def update_sql_entry(self, apply_id, detail_id, new_status, dbname, tbname, sql)
             cursor_source.execute(query, (new_status, dbname, tbname, sql, apply_id, detail_id))
             connection.commit()
             return True if cursor_source.rowcount > 0 else False
-
+```
         
