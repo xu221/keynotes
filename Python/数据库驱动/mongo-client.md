@@ -1,3 +1,4 @@
+```python
 from pymongo import MongoClient
 from pymongo import WriteConcern
 from pymongo import InsertOne, DeleteOne, ReplaceOne, UpdateOne, DeleteMany
@@ -6,7 +7,6 @@ import time, json
 import bson.timestamp
 from rich.table import Table
 from rich.console import Console
-
 
 def func1():
     """
@@ -150,7 +150,10 @@ def initSingleMongodb(connection_url, dbname, username, passwd):
     client_source = MongoClient(connection_url)
     client_source[dbname].command("createRole", udf_role["role"], privileges=udf_role["privileges"], roles=udf_role["roles"])
     client_source[dbname].command("createUser", db_user["user"], pwd=db_user["pwd"], roles=db_user["roles"])
+```
 
+```python
 if __name__ == "__main__":
     func6('mongodb://127.0.0.1:27020', 'mongodb://127.0.0.1:27020')
     func4("mongodb://x21:x21@127.0.0.1:27017/?authSource=admin")
+```
