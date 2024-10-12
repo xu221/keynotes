@@ -29,3 +29,33 @@ with pymysql.connect(**db_connection) as connection:
         cursor.execute(insert_query, data_to_insert)
         # 提交事务
         connection.commit()
+
+def done_execute_sql(self, apply_id, detail_id, execute_mode, envCode, dbname, tbname, sql):
+    """如何安全地插入数据：意义在于安全插入带特殊符号的字符串"""
+    query = """
+    INSERT INTO sql_execute 
+    (apply_id, detail_id, env, execute_mode, execute_status, dbname, tbname, execute_sql, gmt_created) 
+    VALUES (%s, %s, %s, %s, '1', %s, %s, %s, NOW());
+    """
+
+    with pymysql.connect(**self.db_connection) as connection:
+        with connection.cursor() as cursor_source:
+            cursor_source.execute(query, (apply_id, detail_id, envCode, execute_mode, dbname, tbname, sql))
+            connection.commit()
+            return True if cursor_source.rowcount > 0 else False
+
+def update_sql_entry(self, apply_id, detail_id, new_status, dbname, tbname, sql):
+    """如何安全地更新数据"""
+    query = """
+    UPDATE sql_execute
+    SET execute_status = %s, dbname = %s, tbname = %s, execute_sql = %s
+    WHERE apply_id = %s AND detail_id = %s;
+    """
+    
+    with pymysql.connect(**self.db_connection) as connection:
+        with connection.cursor() as cursor_source:
+            cursor_source.execute(query, (new_status, dbname, tbname, sql, apply_id, detail_id))
+            connection.commit()
+            return True if cursor_source.rowcount > 0 else False
+
+        
