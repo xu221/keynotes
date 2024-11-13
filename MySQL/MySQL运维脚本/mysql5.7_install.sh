@@ -177,7 +177,7 @@ fi
 `pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --initialize
 grep "A temporary password is generated" ${errorlogdir}
 # 第二步启动MySQL
-echo "`pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --user=root &"
+echo "`pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf &"
 }
 
 
