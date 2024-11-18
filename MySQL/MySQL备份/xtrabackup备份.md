@@ -29,8 +29,6 @@ xtrabackup --defaults-file=/home/mysql/usr/local/mysql/conf/my8001.cnf \
 --parallel=1 \
 --ftwrl-wait-timeout=120 \
 --ftwrl-wait-threshold=120 \
---kill-long-queries-timeout=60 \
---kill-long-query-type=all \
 --ftwrl-wait-query-type=all \
 --target-dir=/home/backups/1
 
@@ -50,8 +48,6 @@ xtrabackup --defaults-file=/home/mysql/usr/local/mysql/conf/my8001.cnf \
 --parallel=2 \
 --ftwrl-wait-timeout=120 \
 --ftwrl-wait-threshold=120 \
---kill-long-queries-timeout=60 \
---kill-long-query-type=all \
 --ftwrl-wait-query-type=all \
 --target-dir=/home/backups/2
 ```
@@ -72,8 +68,6 @@ xtrabackup --defaults-file=/home/mysql/usr/local/mysql/conf/my8001.cnf  \
 --parallel=2 \
 --ftwrl-wait-timeout=120 \
 --ftwrl-wait-threshold=120 \
---kill-long-queries-timeout=60 \
---kill-long-query-type=all \
 --ftwrl-wait-query-type=all \
 --target-dir=/home/backups/3
 ```
@@ -95,8 +89,6 @@ xtrabackup --defaults-file=/home/mysql/usr/local/mysql/conf/my8001.cnf  \
 --tmpdir=/tmp \
 --ftwrl-wait-timeout=120 \
 --ftwrl-wait-threshold=120 \
---kill-long-queries-timeout=60 \
---kill-long-query-type=all \
 --ftwrl-wait-query-type=all \
 > /home/backups/4
 ```
