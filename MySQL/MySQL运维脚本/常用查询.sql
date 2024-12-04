@@ -59,3 +59,8 @@ IGNORE 1 lines
 
 -- 如果字段被逗号(,)分隔,但是数据却没有用符号包裹，甚至数据中有逗号字符，那这种方式很可能失败，包括很多mysql客户端。
 -- DATAGRIP或者Navicat客户端在这个方面比较强，这种情况也能正确分割导入。
+
+-- DDL变更获取不到元数据锁，查询可疑线程
+SELECT * FROM `PROCESSLIST` a INNER JOIN `INNODB_TRX` b ON a.id = b.trx_mysql_thread_id;
+
+
