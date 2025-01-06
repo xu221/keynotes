@@ -1,5 +1,5 @@
 #!bin/bash
-# @Function  : cd到MySQL二进制包内，在当前目录初始化服务
+# @Function  : cd到MySQL二进制包内，在当前目录初始化服务：拷贝下面脚本，并执行。
 
 function_main(){
     function_init
