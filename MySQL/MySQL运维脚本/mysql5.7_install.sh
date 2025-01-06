@@ -6,6 +6,7 @@ function_main(){
 }
 
 function_init(){
+    port=3306
     server_id=56789
     basedir=`pwd`
     datadir=`pwd`/mydb/data
@@ -28,7 +29,7 @@ echo "
 [mysqld]
 
 # BASE
-port = 3306
+port = ${port}
 server_id = ${server_id}
 basedir = ${basedir}
 datadir = ${datadir}
