@@ -25,7 +25,7 @@ function_init(){
     fi
     if [ -d ${redologdir} ];
         then
-            mv ${redologdir} `pwd`/mydb/redologbak_${timestamp} # 后续可清除这些databak目录
+            mv ${redologdir} `pwd`/mydb/redologbak_${timestamp} # 后续可清除这些redobak目录
     fi
 
     mkdir -p ${datadir}
