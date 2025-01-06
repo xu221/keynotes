@@ -175,9 +175,10 @@ if [ -d ${datadir} ]
 fi
 # 第一步初始化
 `pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --initialize
-grep "A temporary password is generated" ${errorlogdir}
-# 第二步启动MySQL
+
+# 第二步启动MySQL：使用屏幕打印出的启动命令，并根据打印出的root密码通过socket登录MySQL。
 echo "`pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf &"
+grep "A temporary password is generated" ${errorlogdir}
 }
 
 
