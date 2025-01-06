@@ -73,10 +73,12 @@ collation-server=utf8mb4_unicode_ci
 # 设置 innodb 缓冲池大小等性能相关参数（可选，根据实际情况调整）
 innodb_buffer_pool_size=1G" > $confdir/mysqld.conf
 
-if [ -d ${datadir} ]
+if [ -d "${datadir}" ]; 
     then
-      mv ${datadir} `pwd`/mydb/databak
+        timestamp=$(date +%Y%m%d%H%M%S)  # 获取当前时间戳
+        mv ${datadir} `pwd`/mydb/databak_${timestamp} # 后续可清除这些databak目录
 fi
+
 # 第一步初始化
 `pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --initialize
 
