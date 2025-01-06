@@ -18,6 +18,16 @@ function_init(){
     errorlogdir=`pwd`/mysqld.error
     socketdir=`pwd`/mydb/mysqld.sock
     piddir=`pwd`/mydb/mysqld.pid
+    timestamp=$(date +%Y%m%d%H%M%S)  # 获取当前时间戳
+    if [ -d ${datadir} ];
+        then
+            mv ${datadir} `pwd`/mydb/databak_${timestamp} # 后续可清除这些databak目录
+    fi
+    if [ -d ${redologdir} ];
+        then
+            mv ${redologdir} `pwd`/mydb/redologbak_${timestamp} # 后续可清除这些databak目录
+    fi
+
     mkdir -p ${datadir}
     mkdir -p ${binlogdir}
     mkdir -p ${relaylogdir}
@@ -73,18 +83,24 @@ collation-server=utf8mb4_unicode_ci
 # 设置 innodb 缓冲池大小等性能相关参数（可选，根据实际情况调整）
 innodb_buffer_pool_size=1G" > $confdir/mysqld.conf
 
-if [ -d ${datadir} ]; 
-    then
-        timestamp=$(date +%Y%m%d%H%M%S)  # 获取当前时间戳
-        mv ${datadir} `pwd`/mydb/databak_${timestamp} # 后续可清除这些databak目录
-fi
-
 # 第一步初始化
 `pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --initialize
 
 # 第二步启动MySQL：使用屏幕打印出的启动命令，并根据打印出的root密码通过socket登录MySQL。
-echo "`pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf &"
-grep "A temporary password is generated" ${errorlogdir}
+temp_password=$(grep "A temporary password is generated" "${errorlogdir}" | tail -n 1 |awk '{print $NF}')
+if [ -z "${temp_password}" ]; then
+    echo "未在错误日志中找到临时密码，请检查mysql错误日志确认是否初始化异常。"
+    exit 1
+fi
+
+grep "A temporary password is generated" ${errorlogdir} | tail -n 1
+mysql_command="`pwd`/bin/mysql -uroot -p'${temp_password}' -S ${socketdir}"
+mysqld_command="`pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf &"
+
+echo "MySQL启动命令: "
+echo ${mysqld_command}
+echo "MySQL登录命令: "
+echo ${mysql_command}
 }
 
 function_main
