@@ -170,7 +170,7 @@ performance-schema-consumer-events-stages-current=ON
 performance-schema-consumer-events-stages-history=ON
 performance-schema-consumer-events-stages-history-long=ON" > $confdir/mysqld.conf
 
-if [ -d "${datadir}" ]; 
+if [ -d ${datadir} ]; 
     then
         timestamp=$(date +%Y%m%d%H%M%S)  # 获取当前时间戳
         mv ${datadir} `pwd`/mydb/databak_${timestamp} # 后续可清除这些databak目录
