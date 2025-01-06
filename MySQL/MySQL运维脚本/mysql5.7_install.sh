@@ -37,6 +37,8 @@ relay_log = ${relaylogdir}
 innodb_log_group_home_dir = ${redologdir}
 tmpdir = ${tmpdir}
 log_error = ${errorlogdir}
+socket = ${socketdir}
+pid_file = ${piddir}
 default_authentication_plugin=mysql_native_password
 
 # BINLOG
@@ -147,8 +149,6 @@ super_read_only = 0
 skip_external_locking = 1
 skip_name_resolve = 1
 skip_slave_start = 1
-socket = ${socketdir}
-pid_file = ${piddir}
 disabled_storage_engines = ARCHIVE,BLACKHOLE,EXAMPLE,FEDERATED,MEMORY,MERGE,NDB
 log-output = TABLE,FILE
 binlog_expire_logs_seconds = 2592000
