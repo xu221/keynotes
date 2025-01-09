@@ -104,3 +104,7 @@ echo ${mysql_command}
 }
 
 function_main
+
+# MySQL服务启动后，自行通过socket登录修改root密码以开始使用。
+# ALTER USER 'root'@'localhost' IDENTIFIED BY '新密码';
+# 创建真正具有管理权限的用户，并不使用root或者禁用root。
