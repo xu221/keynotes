@@ -32,7 +32,8 @@
 > >
 > > [MySQL高可用架构](./MySQL/MySQL高可用架构)
 > > + MHA
-> >
+> > + MGR
+> > 
 > > [MySQL运维脚本](./MySQL/MySQL运维脚本)
 > > + MySQL5.7二进制包部署
 > > + 常用LINUX脚本
