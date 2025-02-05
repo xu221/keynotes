@@ -203,6 +203,14 @@ db.updateRole('udf_readWrite',
 )
 ```
 
+7.将用户权限置为空
+```shell
+show users
+# 查看用户对应的roles
+db.revokeRolesFromUser("username", [{role: "readWrite", db: "testdb"}])
+```
+
+
 8.查看角色权限
 
 ```shell
