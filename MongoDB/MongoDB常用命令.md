@@ -224,6 +224,12 @@ use dbname
 show roles
 ```
 
+9.删除用户
+```shell
+db.getSiblingDB("testdb").dropUser("userlocal")
+```
+
+
 > 运行状态
 
 1.服务状态
