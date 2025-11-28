@@ -334,6 +334,7 @@ mongoexport --host 127.0.0.1 --port 20004 --gzip -d testdb1 -c tb -o /root/mongo
 
 ```
 mongorestore --host 127.0.0.1 --port 20004 --username=dba --password=dba --authenticationDatabase admin --gzip -d testdb1 --dir=/root/mongosbakup/testdb1
+# restore会通过内存缓存，如果报错KILLED一般是内存不够，可以加--batchSize=100。
 ```
 
 2.恢复所有库
