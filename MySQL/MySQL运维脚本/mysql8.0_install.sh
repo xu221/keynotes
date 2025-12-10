@@ -80,8 +80,11 @@ loose-group_replication_bootstrap_group=off
 # 设置默认字符集等（可选，根据实际需求）
 character-set-server=utf8mb4
 collation-server=utf8mb4_unicode_ci
+# 表名称大小写不敏感为1
+lower_case_table_names=1
 # 设置 innodb 缓冲池大小等性能相关参数（可选，根据实际情况调整）
 innodb_buffer_pool_size=1G" > $confdir/mysqld.conf
+
 
 # 第一步初始化
 `pwd`/bin/mysqld --defaults-file=$confdir/mysqld.conf --initialize
