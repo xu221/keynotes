@@ -65,6 +65,8 @@ log_slave_updates=ON
 log_bin=binlog
 # binlog 格式设置为 ROW
 binlog_format=ROW
+# 事务隔离级别
+transaction-isolation = READ-COMMITTED
 # 事务写集提取算法
 transaction_write_set_extraction=XXHASH64
 # MGR 集群名称，需保证集群内唯一且各节点一致
