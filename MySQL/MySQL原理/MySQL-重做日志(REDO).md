@@ -40,3 +40,34 @@ sync_binlog = 1
 | redo prepare + binlog 未写 | ✅ 可能                    | 回滚         |
 | redo commit + binlog 已写  | ✅ 正常                    | 提交         |
 | redo prepare + binlog 已写 | ✅ 可能                    | **恢复时补提交** |
+
+2.Crash Recovery
+```mermaid
+flowchart TB
+    %% 节点定义
+    A1[查询数据] --> A2[加载磁盘数据到buffer pool]
+    B1[记录 undo log] --> B2[修改内存数据页]
+    C1[提交事务请求] 
+    C2[redo log buffer 持久化到 redo log file]
+    D1[写入 binlog cache] 
+    D2[commit binlog cache（sync_binlog决定落盘） ]
+    E1[commit tag redo log file] 
+    E2[事务提交完成]
+
+    %% Prepare 阶段
+    subgraph Prepare
+        C1 --> C2
+        B2 --> D1
+    end
+
+    %% Commit 阶段
+    subgraph Commit
+         D2 --> E1 --> E2
+    end
+
+    %%链接作 
+    A2 --> B1
+    B2 --> C1
+    C2-->D2
+
+```
