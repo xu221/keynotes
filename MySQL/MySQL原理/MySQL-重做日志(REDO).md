@@ -41,6 +41,11 @@ sync_binlog = 1
 | redo commit + binlog 已写  | ✅ 正常                    | 提交         |
 | redo prepare + binlog 已写 | ✅ 可能                    | **恢复时补提交** |
 
+
+```
+binlog只做辅助作用，当关闭时，redo log保证数据安全；当开启时，进行二阶段提交事务，并且在崩溃恢复时检查binlog中的xid辅助确认prepare数据是否回滚。
+```
+
 2.Crash Recovery
 ```mermaid
 flowchart TB
