@@ -43,10 +43,12 @@ sync_binlog = 1
 
 
 ```
-binlog只做辅助作用，当关闭时，redo log保证数据安全；当开启时，进行二阶段提交事务，并且在崩溃恢复时检查binlog中的xid辅助确认prepare数据是否回滚。
+binlog只做辅助作用，
+当关闭时，redo log保证数据安全；
+当开启时，进行二阶段提交事务，并且在崩溃恢复时检查binlog中的xid辅助确认prepare数据是否回滚。
 ```
 
-2.Crash Recovery
+2.Crash Recovery(单实例)
 ```mermaid
 flowchart TB
     %% 节点定义
@@ -74,5 +76,41 @@ flowchart TB
     A2 --> B1
     B2 --> C1
     C2-->D2
+
+```
+
+3.Crash Recovery(半同步复制主从拓扑)
+
+```mermaid
+flowchart TB
+    %% 节点定义
+    A1[查询数据] --> A2[加载磁盘数据到buffer pool]
+    B1[记录 undo log] --> B2[修改内存数据页]
+    C1[提交事务请求] 
+    C2[redo log buffer 持久化到 redo log file]
+    D1[写入 binlog cache] 
+    D2[commit binlog cache（sync_binlog决定落盘） ]
+    D3[send binlog events]
+    D4[wait slave relay log ACK]
+    E1[commit tag redo log file] 
+    E2[事务提交完成]
+
+    %% Prepare 阶段
+    subgraph Prepare
+        C1 --> C2
+        C2 --> D3
+        D3 --> D4
+        B2 --> D1
+    end
+
+    %% Commit 阶段
+    subgraph Commit
+         D2 --> E1 --> E2
+    end
+
+    %%链接作 
+    A2 --> B1
+    B2 --> C1
+    D4 --> D2
 
 ```
