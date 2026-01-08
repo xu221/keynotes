@@ -27,3 +27,9 @@ undo for trx c         : undo version=trx b data, DB_ROLL_PTR->b,
 undo for trx b         : undo version=trx a data, DB_ROLL_PTR->a,
 undo for trx a         : undo version=insert flag
 ```
+
+2.MVCC与隔离级别
+```
+READ COMMITTED  : 每次查询都生成新的Read View
+REPEATABLE READ : 事务开始时生成Read View，整个事务期间都使用这个Read View
+```
