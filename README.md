@@ -26,6 +26,7 @@
 > > [MySQL异步数仓](./MySQL/MySQL异步数仓)
 > > + clickhouse
 > > + 数据同步
+> > + Apache SeaTunnel数据同步
 > > 
 > > [MySQL监控](./MySQL/MySQL监控)
 > > + performance_schema
