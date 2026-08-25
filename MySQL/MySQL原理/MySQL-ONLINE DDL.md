@@ -76,3 +76,6 @@ In this case, the number of required length bytes changes from 1 to 2, which is 
 而当从60-123跨越了256字节这个界限时会使用COPY算法，阻塞查询。
 ```
 
+```
+text类型转mediumtext类型，锁表，用工具处理
+```
