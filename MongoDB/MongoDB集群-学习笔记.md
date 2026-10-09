@@ -485,7 +485,8 @@ db.shutdownServer()
 
 #### 记录给单机数据库增加从节点
 
-> 这种方式官方不推荐：
+> 一般添加从节点等待自动同步
+
 1.备份主数据
 ```shell
 mongodump --host <primary_host> --port <primary_port> --out /path/to/backup --oplog
