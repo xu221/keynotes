@@ -39,6 +39,22 @@ mysqlbinlog -R -vv -h'' -u'' -p'' --start-datetime='2020-11-17 14:20:10' --stop-
 # 后面变量columncounts为希望查找的表的字段数量
 # </>
 
+# <分析binlog日志查出较大字节的事务或者SQL>
+cat vv解析.sql | perl -ne '
+    if (/^# at (\d+)/) { $pos = $1; }
+    if (/GTID.*sequence_number=(\d+)/) {
+      if (defined $prev_pos) {
+        printf "%12d bytes  start=%d  end=%d  sequence=%s\n",
+          $pos - $prev_pos, $prev_pos, $pos, $prev_seq;
+      }
+      $prev_pos = $pos;
+      $prev_seq = $1;
+    }
+' | sort -nr | head -20
+# </>
+
+
+
 # <将多行SQL合并为一个INSERT语句>
 awk -F'VALUES' '{if(NR>1) print $2;else print $0 }' abs.sql | sed -r '$s/;[[:space:]]*$//' | sed -r "s/;[[:space:]]*$/,/" > d.log
 # </>
